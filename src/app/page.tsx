@@ -3,11 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { 
-  Users, CheckCircle, Clock, AlertTriangle, FileSpreadsheet, 
-  Search, Filter, Shield, UserCheck, Edit3, UserX, FileSignature, 
-  Sparkles, RefreshCw, Layers, CheckSquare, Square, Wifi, WifiOff,
-  GraduationCap, ArrowRight, LogOut, Ban, Calendar, Hash, Sun, Moon, Sunrise,
-  BarChart3, Download, Check, User
+  Users, Search, Shield, UserCheck, Edit3, 
+  RefreshCw, CheckSquare, Square, Wifi, WifiOff,
+  ArrowRight, LogOut, Ban, Calendar, Hash, Sun, Moon, Sunrise,
+  BarChart3, Download, User
 } from 'lucide-react';
 
 interface Student {
@@ -23,6 +22,7 @@ interface Student {
   isEligible: boolean;
 }
 
+// Function to auto-assign sessions: EXACTLY 15 students per session per section
 const autoAssignSession = (indexInSection: number, isEligible: boolean): string => {
   if (!isEligible) return 'Non-Pullout';
   if (indexInSection < 15) return 'Session 1';
@@ -47,6 +47,7 @@ const RAW_STUDENTS_DATA: Array<Omit<Student, 'session'>> = [
   { id: 'th-13', lrn: '117792150055', name: 'GALLARDO, MARIAN, RAFAEL', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-14', lrn: '117792160012', name: 'GALLARDO, NELBELENE, ASEGURADO', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-15', lrn: '117792160033', name: 'GONZAGA, JOSH ANDREE, TAPDASAN', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+
   { id: 'th-16', lrn: '117792160034', name: 'HILIGAN, JHON PAOLO, JUANITO', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-17', lrn: '117797160005', name: 'JERANDOY, JOVENOEL, DENEROS', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-18', lrn: '117792160067', name: 'LARIOSA, RINELEN, BARANGGAN', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
@@ -62,6 +63,7 @@ const RAW_STUDENTS_DATA: Array<Omit<Student, 'session'>> = [
   { id: 'th-28', lrn: '117792160054', name: 'PILAPIL, LEONARD, PASULOT', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-29', lrn: '117792160071', name: 'SABERON, JAHAZIEL, JUANILLO', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-30', lrn: '117797150018', name: 'SARNO, ROVEC, OLIVERIO', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+
   { id: 'th-31', lrn: '126529140010', name: 'VILLAHERMOSA, JOMAR, CARUSCAY', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-32', lrn: '128387160003', name: 'VILLAJOS, LEA MAE, CABALLERO', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-33', lrn: '117792160040', name: 'VILLAREAL, JONA GRACE, GEQUE', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
@@ -83,6 +85,7 @@ const RAW_STUDENTS_DATA: Array<Omit<Student, 'session'>> = [
   { id: 'ga-13', lrn: '117792160036', name: 'LEMORAN, JOCELLE MARL E.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'ga-14', lrn: '117792170099', name: 'LASCONIA, RODEL D.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'ga-15', lrn: '117798170026', name: 'LINGANAY, GINO D.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+
   { id: 'ga-16', lrn: '117796160013', name: 'RUBIO, JOHN ANDREW R.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'ga-17', lrn: '117792160059', name: 'SABERON, JAPET R.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'ga-18', lrn: '117797160007', name: 'TELEBRICO, KEVEN I.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
@@ -114,6 +117,7 @@ const RAW_STUDENTS_DATA: Array<Omit<Student, 'session'>> = [
   { id: 'de-13', lrn: '117796160012', name: 'TAPIC, JHONREY, ESCOREL', section: 'Dewey', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'de-14', lrn: '117797160023', name: 'VILLANUEVA, DHEAN JR, CARAMIHAN', section: 'Dewey', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'de-15', lrn: '117792160007', name: 'CALOG, MELCHIE, JUANILLO', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+
   { id: 'de-16', lrn: '117797170044', name: 'CARAMIHAN, PRECIEL JANE, DAYOHA', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'de-17', lrn: '117792160031', name: 'COMPACION, PATRICE MAXXIMA, JUMAGDAO', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'de-18', lrn: '117792150059', name: 'GERANDOY, KHEM, PILAPIL', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
@@ -130,18 +134,19 @@ const RAW_STUDENTS_DATA: Array<Omit<Student, 'session'>> = [
   { id: 'de-29', lrn: '117796170001', name: 'SOHOT, ROSEMARIE, TANIA', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
 ];
 
-const sectionCounters: { [key: string]: number } = { Thorndike: 0, Gardner: 0, Dewey: 0 };
-
-const INITIAL_STUDENTS: Student[] = RAW_STUDENTS_DATA.map(st => {
-  const currentIndex = sectionCounters[st.section];
-  if (st.isEligible) {
-    sectionCounters[st.section] += 1;
-  }
-  return {
-    ...st,
-    session: autoAssignSession(currentIndex, st.isEligible)
-  };
-});
+const buildInitialStudents = (): Student[] => {
+  const sectionCounters: { [key: string]: number } = { Thorndike: 0, Gardner: 0, Dewey: 0 };
+  return RAW_STUDENTS_DATA.map(st => {
+    const currentIndex = sectionCounters[st.section];
+    if (st.isEligible) {
+      sectionCounters[st.section] += 1;
+    }
+    return {
+      ...st,
+      session: autoAssignSession(currentIndex, st.isEligible)
+    };
+  });
+};
 
 export default function NCAETracker() {
   const [role, setRole] = useState<'proctor' | 'adviser' | null>(null);
@@ -182,10 +187,12 @@ export default function NCAETracker() {
     }
 
     setIsConnected(true);
+    const initialList = buildInitialStudents();
+
     if (!data || data.length === 0 || data.length < 80) {
       await supabase.from('students').delete().neq('id', '0');
-      await supabase.from('students').insert(INITIAL_STUDENTS);
-      setStudents(INITIAL_STUDENTS);
+      await supabase.from('students').insert(initialList);
+      setStudents(initialList);
     } else {
       setStudents(data as Student[]);
     }
@@ -249,11 +256,10 @@ export default function NCAETracker() {
   };
 
   const handleForceReset = async () => {
-    if (confirm('Reset database to 15-student sessions auto-balanced per section?')) {
-      await supabase.from('students').delete().neq('id', '0');
-      await supabase.from('students').insert(INITIAL_STUDENTS);
-      setStudents(INITIAL_STUDENTS);
-    }
+    const initialList = buildInitialStudents();
+    setStudents(initialList);
+    await supabase.from('students').delete().neq('id', '0');
+    await supabase.from('students').insert(initialList);
   };
 
   const exportCSV = () => {
@@ -742,7 +748,6 @@ export default function NCAETracker() {
                           )}
                         </td>
 
-                        {/* Form 4 Attendance Dropdown */}
                         <td className="py-4 px-5 text-center">
                           {role === 'proctor' && student.isEligible ? (
                             <select
