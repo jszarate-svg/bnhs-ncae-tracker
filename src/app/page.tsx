@@ -363,7 +363,6 @@ export default function NCAETracker() {
   const glassContainerStyle = "bg-white/20 backdrop-blur-3xl border border-white/60 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] rounded-3xl relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/40 before:via-transparent before:to-transparent before:pointer-events-none";
   const glassCardStyle = "bg-white/30 backdrop-blur-3xl border border-white/70 shadow-[0_8px_32px_0_rgba(31,38,135,0.12)] rounded-3xl relative overflow-hidden transition-all duration-300 hover:shadow-[0_12px_40px_0_rgba(31,38,135,0.25)] hover:border-white/90 hover:bg-white/40";
 
-  // Rows definition: Row 1 (1,2,3,4), Row 2 (5,6,7,8), Row 3 (9,10,11,12), Row 4 (13,14,15)
   const rowsConfig = [
     { rowNum: 1, seats: [1, 2, 3, 4] },
     { rowNum: 2, seats: [5, 6, 7, 8] },
@@ -398,7 +397,7 @@ export default function NCAETracker() {
               NCAE 2026 Portal
             </h1>
             <p className="text-slate-700 text-sm sm:text-base max-w-md mx-auto font-medium leading-relaxed pt-1">
-              Strict 15 Laptop Cap • Mobile-Friendly Rows Seating Diagram
+              Real-time Examination Pull-Out & Attendance System
             </p>
           </div>
 
@@ -416,7 +415,7 @@ export default function NCAETracker() {
                   Proctor Mode (PIN Locked)
                 </h3>
                 <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                  Requires 4-digit PIN lock to edit student names, session schedules, seating laptop diagram, and attendance.
+                  Requires PIN to access proctor tools, edit schedules, manage Form 4 attendance, and open the interactive seating map.
                 </p>
               </div>
               <div className="flex items-center text-xs font-black text-blue-700 group-hover:translate-x-1 transition-transform">
@@ -436,7 +435,7 @@ export default function NCAETracker() {
                   Adviser Mode
                 </h3>
                 <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                  Public read-only view for section advisers with live seating map, section tabs & analytics.
+                  Public read-only view for section advisers with section tabs & section analytics charts.
                 </p>
               </div>
               <div className="flex items-center text-xs font-black text-emerald-700 group-hover:translate-x-1 transition-transform">
@@ -463,7 +462,7 @@ export default function NCAETracker() {
               </div>
               <div>
                 <h3 className="text-xl font-black text-slate-900">Enter Proctor PIN</h3>
-                <p className="text-xs text-slate-700 font-bold mt-1">Default PIN is <code className="bg-white/60 px-2 py-0.5 rounded text-blue-900">2026</code></p>
+                <p className="text-xs text-slate-700 font-bold mt-1">Authorized proctor access only</p>
               </div>
 
               <input
@@ -479,7 +478,7 @@ export default function NCAETracker() {
 
               {pinError && (
                 <p className="text-xs font-black text-rose-700 bg-rose-100/80 p-2 rounded-xl border border-rose-200">
-                  Incorrect PIN! Try entering 2026.
+                  Incorrect PIN!
                 </p>
               )}
 
@@ -528,20 +527,22 @@ export default function NCAETracker() {
                   Bagonbon NHS — NCAE 2026 Portal
                 </h1>
                 <p className="text-slate-600 text-xs sm:text-sm mt-0.5 font-bold flex items-center gap-1.5">
-                  <Laptop className="w-4 h-4 text-blue-700" /> 15 Laptop Cap • Mobile-Friendly 4-Row Seating Diagram
+                  <Laptop className="w-4 h-4 text-blue-700" /> 15 Laptop Cap • Real-time Exam Tracking
                 </p>
               </div>
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5 self-start md:self-auto">
-            <button
-              onClick={() => setShowSeatingMap(!showSeatingMap)}
-              className={`flex items-center gap-1.5 px-3.5 py-2 backdrop-blur-3xl border border-white/80 rounded-2xl text-xs font-black shadow-sm transition ${showSeatingMap ? 'bg-indigo-600 text-white' : 'bg-white/30 text-slate-800 hover:bg-white/50'}`}
-            >
-              <Grid className="w-4 h-4" />
-              {showSeatingMap ? 'Hide Map' : 'Show Seating Map'}
-            </button>
+            {role === 'proctor' && (
+              <button
+                onClick={() => setShowSeatingMap(!showSeatingMap)}
+                className={`flex items-center gap-1.5 px-3.5 py-2 backdrop-blur-3xl border border-white/80 rounded-2xl text-xs font-black shadow-sm transition ${showSeatingMap ? 'bg-indigo-600 text-white' : 'bg-white/30 text-slate-800 hover:bg-white/50'}`}
+              >
+                <Grid className="w-4 h-4" />
+                {showSeatingMap ? 'Hide Map' : 'Show Seating Map'}
+              </button>
+            )}
 
             <button
               onClick={() => setShowMetrics(!showMetrics)}
@@ -600,17 +601,17 @@ export default function NCAETracker() {
             </div>
           </div>
 
-          {/* MOBILE-FRIENDLY EXACT 4-ROW SEATING MAP */}
-          {showSeatingMap && (
+          {/* INTERACTIVE 4-ROW SEATING MAP — EXCLUSIVELY FOR PROCTOR MODE */}
+          {role === 'proctor' && showSeatingMap && (
             <div className={`${glassContainerStyle} p-4 sm:p-6 space-y-4 border-2 border-indigo-300/60 shadow-2xl`}>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/60 pb-3">
                 <div>
                   <h3 className="text-sm font-black text-slate-900 flex items-center gap-2">
                     <Laptop className="w-5 h-5 text-indigo-700" />
-                    Interactive Seating Diagram (1-4 | 5-8 | 9-12 | 13-15)
+                    Proctor Laptop Seating Map (1-4 | 5-8 | 9-12 | 13-15)
                   </h3>
                   <p className="text-xs text-slate-700 font-medium mt-0.5">
-                    Viewing layout for <span className="font-black text-indigo-900">{selectedSession}</span>. Mobile friendly seat layout.
+                    Viewing layout for <span className="font-black text-indigo-900">{selectedSession}</span>. Click any seat to reassign laptops.
                   </p>
                 </div>
 
@@ -640,7 +641,6 @@ export default function NCAETracker() {
                       </span>
                     </div>
 
-                    {/* Responsive Grid for Row Seats (2 cols on tiny phone screens, 4 cols on desktop) */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
                       {row.seats.map(seatNum => {
                         const assignedStudent = sessionStudents.find(s => s.assignedSeat === seatNum);
@@ -648,8 +648,7 @@ export default function NCAETracker() {
                         return (
                           <button
                             key={seatNum}
-                            disabled={role !== 'proctor'}
-                            onClick={() => role === 'proctor' && setSelectedSeatModal(seatNum)}
+                            onClick={() => setSelectedSeatModal(seatNum)}
                             className={`p-2.5 rounded-2xl text-left border transition-all flex flex-col justify-between h-24 sm:h-28 relative ${
                               assignedStudent
                                 ? assignedStudent.status === 'Completed'
@@ -683,7 +682,7 @@ export default function NCAETracker() {
                                 </div>
                               ) : (
                                 <p className="text-[10px] sm:text-[11px] font-bold text-slate-400 italic">
-                                  {role === 'proctor' ? 'Click to Assign' : 'Empty Seat'}
+                                  Click to Assign
                                 </p>
                               )}
                             </div>
