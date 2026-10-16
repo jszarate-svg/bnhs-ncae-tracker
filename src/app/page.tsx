@@ -6,7 +6,7 @@ import {
   Users, Search, Shield, UserCheck, Edit3, 
   RefreshCw, Wifi, WifiOff,
   ArrowRight, LogOut, Ban, Calendar, Hash, Sun, Moon, Sunrise,
-  BarChart3, Download, User, Laptop, Lock, X, Check, Grid
+  BarChart3, Download, User, Laptop, Lock, X, Check, Grid, Printer
 } from 'lucide-react';
 
 interface Student {
@@ -300,6 +300,10 @@ export default function NCAETracker() {
     await supabase.from('students').insert(initialList);
   };
 
+  const triggerPrintPDF = () => {
+    window.print();
+  };
+
   const exportCSV = () => {
     const headers = ['LRN', 'Name', 'Section', 'Gender', 'Session', 'Seat/Laptop #', 'Status', 'Form 4 Signed'];
     const rows = filteredStudents.map(s => [
@@ -415,7 +419,7 @@ export default function NCAETracker() {
                   Proctor Mode (PIN Locked)
                 </h3>
                 <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                  PIN-protected mode to manage schedules, mark attendance, and assign laptop seating.
+                  PIN-protected mode to manage schedules, mark attendance, and print official reports.
                 </p>
               </div>
               <div className="flex items-center text-xs font-black text-blue-700">
@@ -435,7 +439,7 @@ export default function NCAETracker() {
                   Advisers / Students Mode
                 </h3>
                 <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                  Public directory view. Filter by Section (Thorndike, Gardner, Dewey) to find your schedule.
+                  Public directory view. Filter by Section to look up your schedule or print/export PDF reports.
                 </p>
               </div>
               <div className="flex items-center text-xs font-black text-emerald-700">
@@ -506,10 +510,24 @@ export default function NCAETracker() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-200/50 via-sky-100/60 via-purple-100/40 to-blue-200/50 text-slate-800 font-sans p-2.5 sm:p-6 lg:p-8 relative flex flex-col justify-between overflow-x-hidden">
       
-      <div className="fixed top-0 left-1/4 w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] bg-gradient-to-tr from-blue-300/30 to-indigo-400/20 rounded-full blur-[100px] pointer-events-none" />
+      {/* PRINT-ONLY OFFICIAL DOCUMENT HEADER */}
+      <div className="hidden print:block p-4 mb-4 text-black border-b-2 border-black">
+        <div className="text-center space-y-1">
+          <h1 className="text-xl font-bold uppercase tracking-wider">Bagonbon National High School</h1>
+          <h2 className="text-lg font-semibold">NCAE 2026 Official Examination Schedule & Pullout Report</h2>
+          <p className="text-xs">Generated on: {new Date().toLocaleString()}</p>
+        </div>
+        <div className="flex justify-between items-center text-xs mt-4 pt-2 border-t border-gray-400">
+          <span><strong>Section:</strong> {selectedSection}</span>
+          <span><strong>Session Filter:</strong> {selectedSession}</span>
+          <span><strong>Total Records:</strong> {filteredStudents.length} Students</span>
+        </div>
+      </div>
+
+      <div className="fixed top-0 left-1/4 w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] bg-gradient-to-tr from-blue-300/30 to-indigo-400/20 rounded-full blur-[100px] pointer-events-none print:hidden" />
 
       <div className="relative z-10 space-y-4 sm:space-y-6">
-        <header className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/60 pb-4">
+        <header className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/60 pb-4 print:hidden">
           <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-2">
               <div className="flex items-center gap-1.5 bg-white/30 backdrop-blur-3xl px-3 py-1 rounded-full border border-white/80 text-xs font-extrabold text-slate-900">
@@ -530,10 +548,20 @@ export default function NCAETracker() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2 pt-1 sm:pt-0">
+            {/* PRINT / SAVE AS PDF BUTTON — AVAILABLE FOR BOTH PROCTORS & ADVISERS/STUDENTS */}
+            <button
+              onClick={triggerPrintPDF}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl text-xs font-black shadow-md transition"
+              title="Print Schedule or Save as PDF"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              Print / PDF
+            </button>
+
             {role === 'proctor' && (
               <button
                 onClick={() => setShowSeatingMap(!showSeatingMap)}
-                className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 border border-white/80 rounded-2xl text-xs font-black transition ${showSeatingMap ? 'bg-indigo-600 text-white' : 'bg-white/30 text-slate-800'}`}
+                className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 border border-white/80 rounded-2xl text-xs font-black transition ${showSeatingMap ? 'bg-indigo-900 text-white' : 'bg-white/30 text-slate-800'}`}
               >
                 <Grid className="w-3.5 h-3.5" />
                 {showSeatingMap ? 'Hide Map' : 'Seating Map'}
@@ -554,7 +582,7 @@ export default function NCAETracker() {
                 className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 bg-emerald-600 text-white rounded-2xl text-xs font-black shadow-sm transition"
               >
                 <Download className="w-3.5 h-3.5" />
-                Export
+                CSV
               </button>
             )}
 
@@ -578,7 +606,7 @@ export default function NCAETracker() {
         <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
 
           {/* HORIZONTAL SCROLLABLE SECTION TABS FOR PHONES */}
-          <div className="bg-white/20 backdrop-blur-3xl border border-white/70 p-1.5 rounded-2xl shadow-sm">
+          <div className="bg-white/20 backdrop-blur-3xl border border-white/70 p-1.5 rounded-2xl shadow-sm print:hidden">
             <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5">
               {['All', 'Thorndike', 'Gardner', 'Dewey'].map((sec) => (
                 <button
@@ -598,7 +626,7 @@ export default function NCAETracker() {
 
           {/* INTERACTIVE SEATING MAP — EXCLUSIVELY FOR PROCTOR MODE */}
           {role === 'proctor' && showSeatingMap && (
-            <div className={`${glassContainerStyle} p-3.5 sm:p-6 space-y-3 sm:space-y-4 border-2 border-indigo-300/60 shadow-xl`}>
+            <div className={`${glassContainerStyle} p-3.5 sm:p-6 space-y-3 sm:space-y-4 border-2 border-indigo-300/60 shadow-xl print:hidden`}>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/60 pb-3">
                 <div>
                   <h3 className="text-xs sm:text-sm font-black text-slate-900 flex items-center gap-1.5">
@@ -689,7 +717,7 @@ export default function NCAETracker() {
           )}
 
           {/* STATS COUNTERS CARDS */}
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-2.5 sm:gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-2.5 sm:gap-4 print:hidden">
             <button
               onClick={() => setSelectedStatus('All')}
               className={`${glassCardStyle} p-3 text-left ${selectedStatus === 'All' ? 'border-blue-500 ring-2 ring-blue-500/20 bg-white/50' : ''}`}
@@ -740,7 +768,7 @@ export default function NCAETracker() {
           </div>
 
           {showMetrics && (
-            <div className={`${glassContainerStyle} p-3.5 sm:p-5 space-y-3`}>
+            <div className={`${glassContainerStyle} p-3.5 sm:p-5 space-y-3 print:hidden`}>
               <div className="flex items-center justify-between border-b border-white/60 pb-2">
                 <h3 className="text-xs font-black uppercase text-slate-800 flex items-center gap-1.5">
                   <BarChart3 className="w-3.5 h-3.5 text-emerald-700" /> Per-Section Exam Completion Progress
@@ -783,7 +811,7 @@ export default function NCAETracker() {
           )}
 
           {/* SEARCH & FILTERS BAR */}
-          <div className={`${glassContainerStyle} p-3 flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center justify-between`}>
+          <div className={`${glassContainerStyle} p-3 flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center justify-between print:hidden`}>
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
               <div className="relative flex-1">
                 <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
@@ -833,10 +861,10 @@ export default function NCAETracker() {
           </div>
 
           {/* MOBILE DIRECTORY LIST VIEW (< md screens) & DESKTOP TABLE VIEW (>= md screens) */}
-          <div className={`${glassContainerStyle} p-2 sm:p-0`}>
+          <div className={`${glassContainerStyle} p-2 sm:p-0 print:border-none print:shadow-none print:bg-transparent`}>
             
-            {/* MOBILE CARD VIEW */}
-            <div className="block md:hidden space-y-2.5">
+            {/* MOBILE CARD VIEW (HIDDEN ON PRINT) */}
+            <div className="block md:hidden space-y-2.5 print:hidden">
               {filteredStudents.length === 0 ? (
                 <div className="p-8 text-center text-slate-600 font-bold text-xs">
                   No students found matching current filters.
@@ -942,20 +970,20 @@ export default function NCAETracker() {
               )}
             </div>
 
-            {/* DESKTOP TABLE VIEW */}
-            <div className="hidden md:block overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+            {/* DESKTOP & PRINT TABLE VIEW */}
+            <div className="hidden md:block print:block overflow-x-auto">
+              <table className="w-full text-left border-collapse print:text-black">
                 <thead>
-                  <tr className="bg-white/30 border-b border-white/60 text-slate-600 text-xs font-black uppercase tracking-wider">
-                    <th className="py-4 px-5">LRN & Student Name</th>
-                    <th className="py-4 px-5">Section</th>
-                    <th className="py-4 px-5">Assigned Session & Laptop #</th>
-                    <th className="py-4 px-5">Exam Status</th>
-                    <th className="py-4 px-5 text-center">Form 4 Signed</th>
-                    {role === 'proctor' && <th className="py-4 px-5 text-right">Actions</th>}
+                  <tr className="bg-white/30 border-b border-white/60 text-slate-600 text-xs font-black uppercase tracking-wider print:border-black print:text-black print:bg-gray-100">
+                    <th className="py-3 px-4">LRN & Student Name</th>
+                    <th className="py-3 px-4">Section</th>
+                    <th className="py-3 px-4">Assigned Session & Laptop #</th>
+                    <th className="py-3 px-4">Exam Status</th>
+                    <th className="py-3 px-4 text-center">Form 4 Signed</th>
+                    {role === 'proctor' && <th className="py-3 px-4 text-right print:hidden">Actions</th>}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/40 text-sm">
+                <tbody className="divide-y divide-white/40 text-sm print:divide-gray-300">
                   {filteredStudents.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="py-12 text-center text-slate-600 font-bold">
@@ -964,36 +992,36 @@ export default function NCAETracker() {
                     </tr>
                   ) : (
                     filteredStudents.map(student => (
-                      <tr key={student.id} className={`hover:bg-white/40 transition ${!student.isEligible ? 'opacity-50 bg-slate-100/20' : ''}`}>
-                        <td className="py-4 px-5">
+                      <tr key={student.id} className={`hover:bg-white/40 transition ${!student.isEligible ? 'opacity-50 bg-slate-100/20' : ''} print:opacity-100`}>
+                        <td className="py-3 px-4">
                           <div 
-                            className={`font-black text-slate-900 flex items-center gap-2 ${role === 'proctor' ? 'cursor-pointer hover:text-blue-700' : ''}`}
+                            className={`font-black text-slate-900 flex items-center gap-2 print:text-black ${role === 'proctor' ? 'cursor-pointer hover:text-blue-700' : ''}`}
                             onClick={() => role === 'proctor' && setEditingStudent(student)}
                           >
                             {student.name}
-                            {role === 'proctor' && <Edit3 className="w-3 h-3 text-slate-400 opacity-60" />}
+                            {role === 'proctor' && <Edit3 className="w-3 h-3 text-slate-400 opacity-60 print:hidden" />}
                             {!student.isEligible && (
-                              <span className="bg-white/60 text-slate-600 text-[10px] px-2 py-0.5 rounded-full font-mono font-bold flex items-center gap-1 border border-white">
-                                <Ban className="w-3 h-3 text-rose-500" /> NLS
+                              <span className="bg-white/60 text-slate-600 text-[10px] px-2 py-0.5 rounded-full font-mono font-bold flex items-center gap-1 border border-white print:border-black print:text-black">
+                                <Ban className="w-3 h-3 text-rose-500 print:hidden" /> NLS
                               </span>
                             )}
                           </div>
-                          <div className="text-xs text-slate-500 font-mono font-bold mt-0.5">{student.lrn}</div>
+                          <div className="text-xs text-slate-500 font-mono font-bold mt-0.5 print:text-gray-700">{student.lrn}</div>
                         </td>
 
-                        <td className="py-4 px-5">
-                          <span className="inline-flex items-center px-3 py-1 rounded-xl text-xs font-black bg-white/60 text-slate-800 border border-white shadow-sm">
+                        <td className="py-3 px-4">
+                          <span className="inline-flex items-center px-3 py-1 rounded-xl text-xs font-black bg-white/60 text-slate-800 border border-white shadow-sm print:border-none print:p-0">
                             {student.section}
                           </span>
                         </td>
 
-                        <td className="py-4 px-5 text-slate-700 text-xs">
+                        <td className="py-3 px-4 text-slate-700 text-xs print:text-black">
                           {role === 'proctor' && student.isEligible ? (
                             <div className="flex flex-wrap items-center gap-2">
                               <select
                                 value={student.session}
                                 onChange={e => handleSessionDirectChange(student.id, e.target.value)}
-                                className="bg-blue-50/90 text-blue-900 font-black border border-blue-200 rounded-xl px-3 py-1 text-xs focus:outline-none shadow-sm"
+                                className="bg-blue-50/90 text-blue-900 font-black border border-blue-200 rounded-xl px-3 py-1 text-xs focus:outline-none shadow-sm print:hidden"
                               >
                                 <option value="Day 1 - Session 1">Day 1 - Session 1</option>
                                 <option value="Day 1 - Session 2">Day 1 - Session 2</option>
@@ -1004,59 +1032,70 @@ export default function NCAETracker() {
                                 <option value="Make-up Session">Make-up Session</option>
                                 <option value="Non-Pullout">Non-Pullout</option>
                               </select>
+                              <span className="hidden print:inline font-bold">
+                                {student.session} {student.assignedSeat ? `(Laptop #${student.assignedSeat})` : ''}
+                              </span>
                               {student.assignedSeat && (
-                                <span className="bg-indigo-600 text-white text-[11px] font-black px-2.5 py-1 rounded-xl shadow-sm">
+                                <span className="bg-indigo-600 text-white text-[11px] font-black px-2.5 py-1 rounded-xl shadow-sm print:hidden">
                                   Laptop #{student.assignedSeat}
                                 </span>
                               )}
                             </div>
                           ) : (
-                            <span className="px-3 py-1 rounded-xl border font-black bg-blue-50/90 text-blue-900 border-blue-200/80 shadow-sm">
+                            <span className="px-3 py-1 rounded-xl border font-black bg-blue-50/90 text-blue-900 border-blue-200/80 shadow-sm print:border-none print:p-0">
                               {student.session} {student.assignedSeat ? `(Laptop #${student.assignedSeat})` : ''}
                             </span>
                           )}
                         </td>
 
-                        <td className="py-4 px-5">
+                        <td className="py-3 px-4">
                           {role === 'proctor' && student.isEligible ? (
-                            <select
-                              value={student.status}
-                              onChange={e => handleStatusChange(student.id, e.target.value as Student['status'])}
-                              className="text-xs font-black px-3 py-1.5 rounded-xl border shadow-sm bg-white/80 text-slate-700"
-                            >
-                              <option value="Not Started">Not Started</option>
-                              <option value="In Exam">In Exam</option>
-                              <option value="Completed">Completed</option>
-                              <option value="Absent">Absent / Error</option>
-                              <option value="Forgot to Sign">Forgot to Sign Form 4</option>
-                              <option value="Ineligible">Ineligible (NLS)</option>
-                            </select>
+                            <>
+                              <select
+                                value={student.status}
+                                onChange={e => handleStatusChange(student.id, e.target.value as Student['status'])}
+                                className="text-xs font-black px-3 py-1.5 rounded-xl border shadow-sm bg-white/80 text-slate-700 print:hidden"
+                              >
+                                <option value="Not Started">Not Started</option>
+                                <option value="In Exam">In Exam</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Absent">Absent / Error</option>
+                                <option value="Forgot to Sign">Forgot to Sign Form 4</option>
+                                <option value="Ineligible">Ineligible (NLS)</option>
+                              </select>
+                              <span className="hidden print:inline font-bold">{student.status}</span>
+                            </>
                           ) : (
-                            <span className="inline-block text-xs font-black px-3 py-1 rounded-xl border bg-slate-100 text-slate-800">
+                            <span className="inline-block text-xs font-black px-3 py-1 rounded-xl border bg-slate-100 text-slate-800 print:border-none print:p-0">
                               {student.status}
                             </span>
                           )}
                         </td>
 
-                        <td className="py-4 px-5 text-center">
+                        <td className="py-3 px-4 text-center">
                           {role === 'proctor' && student.isEligible ? (
-                            <select
-                              value={student.signedAttendance ? 'signed' : 'unsigned'}
-                              onChange={e => handleAttendanceChange(student.id, e.target.value === 'signed')}
-                              className="text-xs font-black px-3 py-1.5 rounded-xl border bg-white/80"
-                            >
-                              <option value="signed">✓ Signed Form 4</option>
-                              <option value="unsigned">✕ Unsigned</option>
-                            </select>
+                            <>
+                              <select
+                                value={student.signedAttendance ? 'signed' : 'unsigned'}
+                                onChange={e => handleAttendanceChange(student.id, e.target.value === 'signed')}
+                                className="text-xs font-black px-3 py-1.5 rounded-xl border bg-white/80 print:hidden"
+                              >
+                                <option value="signed">✓ Signed Form 4</option>
+                                <option value="unsigned">✕ Unsigned</option>
+                              </select>
+                              <span className="hidden print:inline font-bold">
+                                {student.signedAttendance ? 'Signed' : 'Unsigned'}
+                              </span>
+                            </>
                           ) : (
                             <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-xl text-xs font-black ${student.signedAttendance ? 'text-emerald-900' : 'text-slate-500'}`}>
-                              {student.signedAttendance ? '✓ Signed Form 4' : '✕ Unsigned'}
+                              {student.signedAttendance ? '✓ Signed' : '✕ Unsigned'}
                             </span>
                           )}
                         </td>
 
                         {role === 'proctor' && (
-                          <td className="py-4 px-5 text-right">
+                          <td className="py-3 px-4 text-right print:hidden">
                             <button
                               onClick={() => setEditingStudent(student)}
                               className="inline-flex items-center gap-1 px-3 py-1 bg-white/80 hover:bg-white border border-white rounded-xl text-slate-800 text-xs font-black shadow-sm"
@@ -1072,23 +1111,23 @@ export default function NCAETracker() {
               </table>
             </div>
 
-            <div className="bg-white/40 backdrop-blur-3xl border-t border-white/60 px-4 sm:px-6 py-3 flex items-center justify-between text-xs font-black text-slate-800">
+            <div className="bg-white/40 backdrop-blur-3xl border-t border-white/60 px-4 sm:px-6 py-3 flex items-center justify-between text-xs font-black text-slate-800 print:bg-transparent print:border-t-2 print:border-black">
               <div className="flex items-center gap-1.5">
-                <Users className="w-4 h-4 text-blue-700" />
-                <span>Filtered: <span className="text-blue-800 font-black">{filteredStudents.length} Students</span></span>
+                <Users className="w-4 h-4 text-blue-700 print:hidden" />
+                <span>Filtered Total: <span className="text-blue-800 font-black print:text-black">{filteredStudents.length} Students</span></span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <footer className="mt-8 pt-4 border-t border-white/60 text-center text-[10px] sm:text-xs font-black text-slate-500/80 tracking-widest uppercase relative z-10">
+      <footer className="mt-8 pt-4 border-t border-white/60 text-center text-[10px] sm:text-xs font-black text-slate-500/80 tracking-widest uppercase relative z-10 print:hidden">
         JUDIMER ZARATE — BAGONBON NHS NCAE 2026 PORTAL
       </footer>
 
       {/* SEAT / LAPTOP ASSIGNMENT MODAL */}
       {selectedSeatModal && role === 'proctor' && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-2xl flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-2xl flex items-center justify-center p-4 z-50 print:hidden">
           <div className="bg-white/30 backdrop-blur-3xl border border-white/80 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-white/60 pb-3">
               <div>
@@ -1156,7 +1195,7 @@ export default function NCAETracker() {
       )}
 
       {editingStudent && role === 'proctor' && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-2xl flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-2xl flex items-center justify-center p-4 z-50 print:hidden">
           <div className="bg-white/30 backdrop-blur-3xl border border-white/80 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4">
             <div>
               <h3 className="text-base sm:text-lg font-black text-slate-900">Edit Student Record</h3>
