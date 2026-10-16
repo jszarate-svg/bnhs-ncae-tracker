@@ -6,7 +6,7 @@ import {
   Users, Search, Shield, UserCheck, Edit3, 
   RefreshCw, CheckSquare, Square, Wifi, WifiOff,
   ArrowRight, LogOut, Ban, Calendar, Hash, Sun, Moon, Sunrise,
-  BarChart3, Download, User
+  BarChart3, Download, User, Laptop
 } from 'lucide-react';
 
 interface Student {
@@ -22,16 +22,8 @@ interface Student {
   isEligible: boolean;
 }
 
-// Function to auto-assign sessions: EXACTLY 15 students per session per section
-const autoAssignSession = (indexInSection: number, isEligible: boolean): string => {
-  if (!isEligible) return 'Non-Pullout';
-  if (indexInSection < 15) return 'Session 1';
-  if (indexInSection < 30) return 'Session 2';
-  return 'Session 3';
-};
-
 const RAW_STUDENTS_DATA: Array<Omit<Student, 'session'>> = [
-  // 10 - THORNDIKE (34 Total)
+  // 10 - THORNDIKE (34 Total, 33 Eligible)
   { id: 'th-1', lrn: '117792150055', name: 'ALISNA, JULIET, CALAPUAN', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-2', lrn: '117792160061', name: 'ARIOSTE, SHAJARA, CABURNAY', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-3', lrn: '117792160043', name: 'BARCOMA, JASCENT CLEAR, ISOGAN', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
@@ -47,7 +39,6 @@ const RAW_STUDENTS_DATA: Array<Omit<Student, 'session'>> = [
   { id: 'th-13', lrn: '117792150055', name: 'GALLARDO, MARIAN, RAFAEL', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-14', lrn: '117792160012', name: 'GALLARDO, NELBELENE, ASEGURADO', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-15', lrn: '117792160033', name: 'GONZAGA, JOSH ANDREE, TAPDASAN', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
-
   { id: 'th-16', lrn: '117792160034', name: 'HILIGAN, JHON PAOLO, JUANITO', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-17', lrn: '117797160005', name: 'JERANDOY, JOVENOEL, DENEROS', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-18', lrn: '117792160067', name: 'LARIOSA, RINELEN, BARANGGAN', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
@@ -63,13 +54,12 @@ const RAW_STUDENTS_DATA: Array<Omit<Student, 'session'>> = [
   { id: 'th-28', lrn: '117792160054', name: 'PILAPIL, LEONARD, PASULOT', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-29', lrn: '117792160071', name: 'SABERON, JAHAZIEL, JUANILLO', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-30', lrn: '117797150018', name: 'SARNO, ROVEC, OLIVERIO', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
-
   { id: 'th-31', lrn: '126529140010', name: 'VILLAHERMOSA, JOMAR, CARUSCAY', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-32', lrn: '128387160003', name: 'VILLAJOS, LEA MAE, CABALLERO', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-33', lrn: '117792160040', name: 'VILLAREAL, JONA GRACE, GEQUE', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-34', lrn: '117796170021', name: 'VILLARMENTE, JOE, TANQUE', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
 
-  // 10 - GARDNER (29 Total)
+  // 10 - GARDNER (29 Total, All Eligible)
   { id: 'ga-1', lrn: '117792160003', name: 'BALOSA, MARK JHON L.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'ga-2', lrn: '117792160056', name: 'BARING, RUSSEL E.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'ga-3', lrn: '117792160030', name: 'CABULONG, EJAY O.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
@@ -85,7 +75,6 @@ const RAW_STUDENTS_DATA: Array<Omit<Student, 'session'>> = [
   { id: 'ga-13', lrn: '117792160036', name: 'LEMORAN, JOCELLE MARL E.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'ga-14', lrn: '117792170099', name: 'LASCONIA, RODEL D.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'ga-15', lrn: '117798170026', name: 'LINGANAY, GINO D.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
-
   { id: 'ga-16', lrn: '117796160013', name: 'RUBIO, JOHN ANDREW R.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'ga-17', lrn: '117792160059', name: 'SABERON, JAPET R.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'ga-18', lrn: '117797160007', name: 'TELEBRICO, KEVEN I.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
@@ -101,7 +90,7 @@ const RAW_STUDENTS_DATA: Array<Omit<Student, 'session'>> = [
   { id: 'ga-28', lrn: '117792160070', name: 'PARAN, JERAMAE A.', section: 'Gardner', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'ga-29', lrn: '117792160018', name: 'SUMANTING, ZYAN BELLE D.', section: 'Gardner', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
 
-  // 10 - DEWEY (29 Total)
+  // 10 - DEWEY (29 Total, All Eligible)
   { id: 'de-1', lrn: '107921150317', name: 'ABUEME, MA. ANGELICA, PILAPIL', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'de-2', lrn: '116909160013', name: 'ALBIAR, DENNISE JEAN, PURISIMA', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'de-3', lrn: '117797170034', name: 'ALESNA, ANGEL, CAMPANIA', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
@@ -117,7 +106,6 @@ const RAW_STUDENTS_DATA: Array<Omit<Student, 'session'>> = [
   { id: 'de-13', lrn: '117796160012', name: 'TAPIC, JHONREY, ESCOREL', section: 'Dewey', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'de-14', lrn: '117797160023', name: 'VILLANUEVA, DHEAN JR, CARAMIHAN', section: 'Dewey', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'de-15', lrn: '117792160007', name: 'CALOG, MELCHIE, JUANILLO', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
-
   { id: 'de-16', lrn: '117797170044', name: 'CARAMIHAN, PRECIEL JANE, DAYOHA', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'de-17', lrn: '117792160031', name: 'COMPACION, PATRICE MAXXIMA, JUMAGDAO', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'de-18', lrn: '117792150059', name: 'GERANDOY, KHEM, PILAPIL', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
@@ -135,16 +123,30 @@ const RAW_STUDENTS_DATA: Array<Omit<Student, 'session'>> = [
 ];
 
 const buildInitialStudents = (): Student[] => {
-  const sectionCounters: { [key: string]: number } = { Thorndike: 0, Gardner: 0, Dewey: 0 };
+  // Ordered sequence of eligible students prioritizing section unity:
+  // Session 1 (Day 1 - S1): 15 Thorndike
+  // Session 2 (Day 1 - S2): 15 Thorndike
+  // Session 3 (Day 2 - S1): 3 Thorndike + 12 Gardner (Gardner Majority)
+  // Session 4 (Day 2 - S2): 15 Gardner
+  // Session 5 (Day 3 - S1): 2 Gardner + 13 Dewey (Dewey Majority)
+  // Session 6 (Day 3 - S2): 14 Dewey
+
+  let eligibleCounter = 0;
   return RAW_STUDENTS_DATA.map(st => {
-    const currentIndex = sectionCounters[st.section];
-    if (st.isEligible) {
-      sectionCounters[st.section] += 1;
+    if (!st.isEligible) {
+      return { ...st, session: 'Non-Pullout' };
     }
-    return {
-      ...st,
-      session: autoAssignSession(currentIndex, st.isEligible)
-    };
+
+    let sessionName = 'Session 1';
+    if (eligibleCounter < 15) sessionName = 'Day 1 - Session 1';
+    else if (eligibleCounter < 30) sessionName = 'Day 1 - Session 2';
+    else if (eligibleCounter < 45) sessionName = 'Day 2 - Session 1';
+    else if (eligibleCounter < 60) sessionName = 'Day 2 - Session 2';
+    else if (eligibleCounter < 75) sessionName = 'Day 3 - Session 1';
+    else sessionName = 'Day 3 - Session 2';
+
+    eligibleCounter++;
+    return { ...st, session: sessionName };
   });
 };
 
@@ -246,7 +248,7 @@ export default function NCAETracker() {
     await supabase.from('students').update({
       name: editingStudent.name.trim(),
       lrn: editingStudent.lrn.trim(),
-      session: editingStudent.session.trim() || 'Session 1',
+      session: editingStudent.session.trim() || 'Day 1 - Session 1',
       status: editingStudent.status,
       signedAttendance: editingStudent.signedAttendance,
       customStatus: editingStudent.customStatus || ''
@@ -277,7 +279,7 @@ export default function NCAETracker() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `NCAE_Pullout_${selectedSection}_${new Date().toISOString().slice(0,10)}.csv`);
+    link.setAttribute('download', `NCAE_15Laptops_Pullout_${selectedSection}_${new Date().toISOString().slice(0,10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -349,7 +351,7 @@ export default function NCAETracker() {
               NCAE 2026 Portal
             </h1>
             <p className="text-slate-700 text-sm sm:text-base max-w-md mx-auto font-medium leading-relaxed pt-1">
-              Real-time Examination Pull-Out & Attendance System with Liquid Glassmorphism UI.
+              Strict 15 Laptop Cap • 2 Sessions / Day Schedule
             </p>
           </div>
 
@@ -431,7 +433,9 @@ export default function NCAETracker() {
                 <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-slate-900 mt-2 drop-shadow-sm">
                   Bagonbon NHS — NCAE 2026 Portal
                 </h1>
-                <p className="text-slate-600 text-sm mt-0.5 font-bold">Real-time Student Pull-Out & Attendance Tracking Portal</p>
+                <p className="text-slate-600 text-sm mt-0.5 font-bold flex items-center gap-1.5">
+                  <Laptop className="w-4 h-4 text-blue-700" /> 15 Laptops Max Per Session • 2 Sessions / Day
+                </p>
               </div>
             </div>
           </div>
@@ -548,7 +552,7 @@ export default function NCAETracker() {
             <div className={`${glassContainerStyle} p-5 space-y-4`}>
               <div className="flex items-center justify-between border-b border-white/60 pb-3">
                 <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-2">
-                  <BarChart3 className="w-4 h-4 text-emerald-700" /> Per-Section Exam Completion Progress (15 Students / Session Cap)
+                  <BarChart3 className="w-4 h-4 text-emerald-700" /> Per-Section Exam Completion Progress
                 </h3>
                 <span className="text-[11px] font-mono text-emerald-700 font-black">Live Sync</span>
               </div>
@@ -605,7 +609,7 @@ export default function NCAETracker() {
                 onChange={e => setSelectedSession(e.target.value)}
                 className="bg-white/50 border border-white/80 rounded-2xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:border-blue-500 shadow-inner font-black"
               >
-                <option value="All">All Sessions</option>
+                <option value="All">All Sessions (Day 1 - Day 3)</option>
                 {uniqueSessions.map(session => (
                   <option key={session} value={session}>{session}</option>
                 ))}
@@ -632,7 +636,7 @@ export default function NCAETracker() {
                   onClick={handleForceReset}
                   className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-xs font-black shadow-lg shadow-blue-500/30 border border-blue-400/50 transition"
                 >
-                  <RefreshCw className="w-3.5 h-3.5" /> Auto-Distribute 15/Session
+                  <RefreshCw className="w-3.5 h-3.5" /> Reset Schedule (15 Laptops/Session)
                 </button>
               </div>
             )}
@@ -645,9 +649,9 @@ export default function NCAETracker() {
                   <tr className="bg-white/30 border-b border-white/60 text-slate-600 text-xs font-black uppercase tracking-wider">
                     <th className="py-4 px-5">LRN & Student Name</th>
                     <th className="py-4 px-5">Section</th>
-                    <th className="py-4 px-5">Assigned Session</th>
+                    <th className="py-4 px-5">Assigned Session (Max 15 Laptops)</th>
                     <th className="py-4 px-5">Exam Status</th>
-                    <th className="py-4 px-5 text-center">Form 4 Signed Dropdown</th>
+                    <th className="py-4 px-5 text-center">Form 4 Signed</th>
                     {role === 'proctor' && <th className="py-4 px-5 text-right">Actions</th>}
                   </tr>
                 </thead>
@@ -696,9 +700,12 @@ export default function NCAETracker() {
                               onChange={e => handleSessionDirectChange(student.id, e.target.value)}
                               className="bg-blue-50/90 hover:bg-blue-100/90 text-blue-900 font-black border border-blue-200 rounded-xl px-3 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 transition cursor-pointer shadow-sm"
                             >
-                              <option value="Session 1">Session 1</option>
-                              <option value="Session 2">Session 2</option>
-                              <option value="Session 3">Session 3</option>
+                              <option value="Day 1 - Session 1">Day 1 - Session 1</option>
+                              <option value="Day 1 - Session 2">Day 1 - Session 2</option>
+                              <option value="Day 2 - Session 1">Day 2 - Session 1</option>
+                              <option value="Day 2 - Session 2">Day 2 - Session 2</option>
+                              <option value="Day 3 - Session 1">Day 3 - Session 1</option>
+                              <option value="Day 3 - Session 2">Day 3 - Session 2</option>
                               <option value="Make-up Session">Make-up Session</option>
                               <option value="Non-Pullout">Non-Pullout</option>
                             </select>
@@ -795,7 +802,7 @@ export default function NCAETracker() {
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-blue-700" />
                 <span>
-                  Total Test Takers for Selected Session:{' '}
+                  Students in Filter:{' '}
                   <span className="text-blue-800 font-black text-sm ml-1">
                     {filteredStudents.length} Students
                   </span>
@@ -808,7 +815,7 @@ export default function NCAETracker() {
                 </span>{' '}
                 •{' '}
                 <span className="font-black text-slate-900">
-                  {selectedSession === 'All' ? 'All Sessions' : selectedSession}
+                  {selectedSession === 'All' ? 'All Days/Sessions' : selectedSession}
                 </span>{' '}
                 •{' '}
                 <span className="font-black text-slate-900">
@@ -865,7 +872,7 @@ export default function NCAETracker() {
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Session 1, Session 2, Session 3"
+                  placeholder="e.g. Day 1 - Session 1, Day 2 - Session 2"
                   value={editingStudent.session}
                   onChange={e => setEditingStudent({ ...editingStudent, session: e.target.value })}
                   className="w-full bg-white/60 border border-white/80 rounded-2xl px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500 shadow-inner font-bold"
