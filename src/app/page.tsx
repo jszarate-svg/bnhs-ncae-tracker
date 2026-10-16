@@ -228,13 +228,21 @@ export default function NCAETracker() {
     }
   };
 
-  // Only extract sessions that actually exist for current students
   const uniqueSessions = Array.from(new Set(students.map(s => s.session))).filter(Boolean).sort();
 
   const filteredStudents = students.filter(s => {
     const matchesSection = selectedSection === 'All' || s.section === selectedSection;
     const matchesSession = selectedSession === 'All' || s.session === selectedSession;
-    const matchesStatus = selectedStatus === 'All' || s.status === selectedStatus;
+    
+    let matchesStatus = true;
+    if (selectedStatus === 'Forgot to Sign') {
+      matchesStatus = s.status === 'Forgot to Sign' || (!s.signedAttendance && s.status === 'Completed');
+    } else if (selectedStatus === 'Ineligible') {
+      matchesStatus = !s.isEligible || s.status === 'Ineligible';
+    } else if (selectedStatus !== 'All') {
+      matchesStatus = s.status === selectedStatus;
+    }
+
     const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase()) || s.lrn.includes(searchQuery);
     return matchesSection && matchesSession && matchesStatus && matchesSearch;
   });
@@ -325,270 +333,334 @@ export default function NCAETracker() {
             <span className={`inline-block w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
             {isConnected ? 'Connected to Supabase Realtime' : 'Connecting to Database...'}
           </div>
+
+          <div className="pt-2 text-[11px] font-semibold text-slate-400/70 tracking-wide uppercase">
+            Judimer Zarate — Bagonbon NHS NCAE 2026 Portal
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-sky-50/40 to-indigo-50/30 text-slate-800 font-sans p-4 sm:p-6 lg:p-8 relative">
-      <header className="max-w-7xl mx-auto mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200/60 pb-6">
-        <div>
-          <div className="flex items-center gap-3">
-            <div>
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 bg-white/80 backdrop-blur-md px-3 py-1 rounded-full border border-white/90 shadow-sm text-xs font-semibold text-slate-700">
-                  {greeting.icon}
-                  {greeting.text}
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-sky-50/40 to-indigo-50/30 text-slate-800 font-sans p-4 sm:p-6 lg:p-8 relative flex flex-col justify-between">
+      <div>
+        <header className="max-w-7xl mx-auto mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200/60 pb-6">
+          <div>
+            <div className="flex items-center gap-3">
+              <div>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 bg-white/80 backdrop-blur-md px-3 py-1 rounded-full border border-white/90 shadow-sm text-xs font-semibold text-slate-700">
+                    {greeting.icon}
+                    {greeting.text}
+                  </div>
+                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md ${isConnected ? 'bg-emerald-500/10 text-emerald-700 border border-emerald-200/60' : 'bg-rose-500/10 text-rose-700 border border-rose-200/60'}`}>
+                    {isConnected ? <><Wifi className="w-3 h-3" /> Live Sync Active</> : <><WifiOff className="w-3 h-3" /> Connecting...</>}
+                  </span>
                 </div>
-                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md ${isConnected ? 'bg-emerald-500/10 text-emerald-700 border border-emerald-200/60' : 'bg-rose-500/10 text-rose-700 border border-rose-200/60'}`}>
-                  {isConnected ? <><Wifi className="w-3 h-3" /> Live Sync Active</> : <><WifiOff className="w-3 h-3" /> Connecting...</>}
-                </span>
+                <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mt-2">
+                  Bagonbon NHS — NCAE 2026 Portal
+                </h1>
+                <p className="text-slate-500 text-sm mt-0.5">Real-time Student Pull-Out & Attendance Tracking Portal</p>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mt-2">
-                Bagonbon NHS — NCAE 2026 Portal
-              </h1>
-              <p className="text-slate-500 text-sm mt-0.5">Real-time Student Pull-Out & Attendance Tracking Portal</p>
             </div>
           </div>
-        </div>
 
-        <div className="flex items-center gap-3 self-start md:self-auto">
-          <div className="flex items-center bg-white/70 backdrop-blur-xl border border-white/80 p-1 rounded-2xl shadow-sm">
-            <span className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold ${
-              role === 'proctor' ? 'bg-blue-600 text-white shadow-sm' : 'bg-emerald-600 text-white shadow-sm'
-            }`}>
-              {role === 'proctor' ? <Shield className="w-3.5 h-3.5" /> : <UserCheck className="w-3.5 h-3.5" />}
-              {role === 'proctor' ? 'Proctor Mode' : 'Adviser Mode'}
-            </span>
-            <button
-              onClick={() => setRole(null)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-slate-500 hover:text-slate-900 text-xs font-semibold transition"
-            >
-              <LogOut className="w-3.5 h-3.5" /> Exit Role
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-          <div className="bg-white/70 backdrop-blur-xl border border-white/80 p-4 rounded-3xl shadow-sm">
-            <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Total Students</p>
-            <p className="text-2xl font-black text-slate-900 mt-1">{totalCount}</p>
-          </div>
-          <div className="bg-white/70 backdrop-blur-xl border border-white/80 p-4 rounded-3xl shadow-sm">
-            <p className="text-amber-600 text-xs font-semibold uppercase tracking-wider">In Exam</p>
-            <p className="text-2xl font-black text-amber-600 mt-1">{inExam}</p>
-          </div>
-          <div className="bg-white/70 backdrop-blur-xl border border-white/80 p-4 rounded-3xl shadow-sm">
-            <p className="text-emerald-600 text-xs font-semibold uppercase tracking-wider">Completed</p>
-            <p className="text-2xl font-black text-emerald-600 mt-1">{completed}</p>
-          </div>
-          <div className="bg-white/70 backdrop-blur-xl border border-white/80 p-4 rounded-3xl shadow-sm">
-            <p className="text-rose-600 text-xs font-semibold uppercase tracking-wider">Absent / Error</p>
-            <p className="text-2xl font-black text-rose-600 mt-1">{absent}</p>
-          </div>
-          <div className="bg-white/70 backdrop-blur-xl border border-white/80 p-4 rounded-3xl shadow-sm">
-            <p className="text-purple-600 text-xs font-semibold uppercase tracking-wider">Unsigned Form 4</p>
-            <p className="text-2xl font-black text-purple-600 mt-1">{forgotSign}</p>
-          </div>
-          <div className="bg-white/70 backdrop-blur-xl border border-white/80 p-4 rounded-3xl shadow-sm col-span-2 md:col-span-1">
-            <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Ineligible (NLS)</p>
-            <p className="text-2xl font-black text-slate-400 mt-1">{ineligibleCount}</p>
-          </div>
-        </div>
-
-        <div className="bg-white/70 backdrop-blur-xl border border-white/80 p-4 rounded-3xl shadow-sm flex flex-wrap gap-4 items-center justify-between">
-          <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
-            <div className="relative flex-1 min-w-[200px]">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-              <input
-                type="text"
-                placeholder="Search name or LRN..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                className="w-full bg-white/80 border border-slate-200/80 rounded-2xl pl-10 pr-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-blue-500 shadow-inner"
-              />
-            </div>
-
-            <select
-              value={selectedSection}
-              onChange={e => setSelectedSection(e.target.value)}
-              className="bg-white/80 border border-slate-200/80 rounded-2xl px-3.5 py-2 text-sm text-slate-700 focus:outline-none focus:border-blue-500 shadow-inner font-medium"
-            >
-              <option value="All">All Sections</option>
-              <option value="Thorndike">Thorndike</option>
-              <option value="Gardner">Gardner</option>
-              <option value="Dewey">Dewey</option>
-            </select>
-
-            <select
-              value={selectedSession}
-              onChange={e => setSelectedSession(e.target.value)}
-              className="bg-white/80 border border-slate-200/80 rounded-2xl px-3.5 py-2 text-sm text-slate-700 focus:outline-none focus:border-blue-500 shadow-inner font-medium"
-            >
-              <option value="All">All Sessions</option>
-              {uniqueSessions.map(session => (
-                <option key={session} value={session}>{session}</option>
-              ))}
-            </select>
-
-            <select
-              value={selectedStatus}
-              onChange={e => setSelectedStatus(e.target.value)}
-              className="bg-white/80 border border-slate-200/80 rounded-2xl px-3.5 py-2 text-sm text-slate-700 focus:outline-none focus:border-blue-500 shadow-inner font-medium"
-            >
-              <option value="All">All Statuses</option>
-              <option value="Not Started">Not Started</option>
-              <option value="In Exam">In Exam</option>
-              <option value="Completed">Completed</option>
-              <option value="Absent">Absent / Error</option>
-              <option value="Forgot to Sign">Forgot to Sign Form 4</option>
-              <option value="Ineligible">Ineligible (NLS)</option>
-            </select>
-          </div>
-
-          {role === 'proctor' && (
-            <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3 self-start md:self-auto">
+            <div className="flex items-center bg-white/70 backdrop-blur-xl border border-white/80 p-1 rounded-2xl shadow-sm">
+              <span className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold ${
+                role === 'proctor' ? 'bg-blue-600 text-white shadow-sm' : 'bg-emerald-600 text-white shadow-sm'
+              }`}>
+                {role === 'proctor' ? <Shield className="w-3.5 h-3.5" /> : <UserCheck className="w-3.5 h-3.5" />}
+                {role === 'proctor' ? 'Proctor Mode' : 'Adviser Mode'}
+              </span>
               <button
-                onClick={handleForceReset}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-xs font-semibold shadow-md shadow-blue-500/20 transition"
+                onClick={() => setRole(null)}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-slate-500 hover:text-slate-900 text-xs font-semibold transition"
               >
-                <RefreshCw className="w-3.5 h-3.5" /> Reset Database
+                <LogOut className="w-3.5 h-3.5" /> Exit Role
               </button>
             </div>
-          )}
-        </div>
+          </div>
+        </header>
 
-        <div className="bg-white/70 backdrop-blur-2xl border border-white/80 rounded-3xl overflow-hidden shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-slate-50/60 border-b border-slate-200/60 text-slate-500 text-xs font-bold uppercase tracking-wider">
-                  <th className="py-4 px-5">LRN & Student Name</th>
-                  <th className="py-4 px-5">Section</th>
-                  <th className="py-4 px-5">Assigned Session</th>
-                  <th className="py-4 px-5">Exam Status</th>
-                  <th className="py-4 px-5 text-center">Form 4 Signed</th>
-                  {role === 'proctor' && <th className="py-4 px-5 text-right">Actions</th>}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 text-sm">
-                {filteredStudents.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="py-12 text-center text-slate-400">
-                      No students found matching current filters.
-                    </td>
+        <div className="max-w-7xl mx-auto space-y-6">
+          
+          {/* Interactive Stat Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+            <button
+              onClick={() => setSelectedStatus('All')}
+              className={`text-left bg-white/70 backdrop-blur-xl border p-4 rounded-3xl shadow-sm transition-all hover:scale-105 ${selectedStatus === 'All' ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-white/80'}`}
+            >
+              <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Total Students</p>
+              <p className="text-2xl font-black text-slate-900 mt-1">{totalCount}</p>
+            </button>
+
+            <button
+              onClick={() => setSelectedStatus('In Exam')}
+              className={`text-left bg-white/70 backdrop-blur-xl border p-4 rounded-3xl shadow-sm transition-all hover:scale-105 ${selectedStatus === 'In Exam' ? 'border-amber-500 ring-2 ring-amber-500/20' : 'border-white/80'}`}
+            >
+              <p className="text-amber-600 text-xs font-semibold uppercase tracking-wider">In Exam</p>
+              <p className="text-2xl font-black text-amber-600 mt-1">{inExam}</p>
+            </button>
+
+            <button
+              onClick={() => setSelectedStatus('Completed')}
+              className={`text-left bg-white/70 backdrop-blur-xl border p-4 rounded-3xl shadow-sm transition-all hover:scale-105 ${selectedStatus === 'Completed' ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-white/80'}`}
+            >
+              <p className="text-emerald-600 text-xs font-semibold uppercase tracking-wider">Completed</p>
+              <p className="text-2xl font-black text-emerald-600 mt-1">{completed}</p>
+            </button>
+
+            <button
+              onClick={() => setSelectedStatus('Absent')}
+              className={`text-left bg-white/70 backdrop-blur-xl border p-4 rounded-3xl shadow-sm transition-all hover:scale-105 ${selectedStatus === 'Absent' ? 'border-rose-500 ring-2 ring-rose-500/20' : 'border-white/80'}`}
+            >
+              <p className="text-rose-600 text-xs font-semibold uppercase tracking-wider">Absent / Error</p>
+              <p className="text-2xl font-black text-rose-600 mt-1">{absent}</p>
+            </button>
+
+            <button
+              onClick={() => setSelectedStatus('Forgot to Sign')}
+              className={`text-left bg-white/70 backdrop-blur-xl border p-4 rounded-3xl shadow-sm transition-all hover:scale-105 ${selectedStatus === 'Forgot to Sign' ? 'border-purple-500 ring-2 ring-purple-500/20' : 'border-white/80'}`}
+            >
+              <p className="text-purple-600 text-xs font-semibold uppercase tracking-wider">Unsigned Form 4</p>
+              <p className="text-2xl font-black text-purple-600 mt-1">{forgotSign}</p>
+            </button>
+
+            <button
+              onClick={() => setSelectedStatus('Ineligible')}
+              className={`text-left bg-white/70 backdrop-blur-xl border p-4 rounded-3xl shadow-sm transition-all hover:scale-105 col-span-2 md:col-span-1 ${selectedStatus === 'Ineligible' ? 'border-slate-500 ring-2 ring-slate-500/20' : 'border-white/80'}`}
+            >
+              <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Ineligible (NLS)</p>
+              <p className="text-2xl font-black text-slate-400 mt-1">{ineligibleCount}</p>
+            </button>
+          </div>
+
+          {/* Filter Bar */}
+          <div className="bg-white/70 backdrop-blur-xl border border-white/80 p-4 rounded-3xl shadow-sm flex flex-wrap gap-4 items-center justify-between">
+            <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+              <div className="relative flex-1 min-w-[200px]">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                <input
+                  type="text"
+                  placeholder="Search name or LRN..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className="w-full bg-white/80 border border-slate-200/80 rounded-2xl pl-10 pr-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-blue-500 shadow-inner"
+                />
+              </div>
+
+              <select
+                value={selectedSection}
+                onChange={e => setSelectedSection(e.target.value)}
+                className="bg-white/80 border border-slate-200/80 rounded-2xl px-3.5 py-2 text-sm text-slate-700 focus:outline-none focus:border-blue-500 shadow-inner font-medium"
+              >
+                <option value="All">All Sections</option>
+                <option value="Thorndike">Thorndike</option>
+                <option value="Gardner">Gardner</option>
+                <option value="Dewey">Dewey</option>
+              </select>
+
+              <select
+                value={selectedSession}
+                onChange={e => setSelectedSession(e.target.value)}
+                className="bg-white/80 border border-slate-200/80 rounded-2xl px-3.5 py-2 text-sm text-slate-700 focus:outline-none focus:border-blue-500 shadow-inner font-medium"
+              >
+                <option value="All">All Sessions</option>
+                {uniqueSessions.map(session => (
+                  <option key={session} value={session}>{session}</option>
+                ))}
+              </select>
+
+              <select
+                value={selectedStatus}
+                onChange={e => setSelectedStatus(e.target.value)}
+                className="bg-white/80 border border-slate-200/80 rounded-2xl px-3.5 py-2 text-sm text-slate-700 focus:outline-none focus:border-blue-500 shadow-inner font-medium"
+              >
+                <option value="All">All Statuses</option>
+                <option value="Not Started">Not Started</option>
+                <option value="In Exam">In Exam</option>
+                <option value="Completed">Completed</option>
+                <option value="Absent">Absent / Error</option>
+                <option value="Forgot to Sign">Forgot to Sign Form 4</option>
+                <option value="Ineligible">Ineligible (NLS)</option>
+              </select>
+            </div>
+
+            {role === 'proctor' && (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleForceReset}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-xs font-semibold shadow-md shadow-blue-500/20 transition"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" /> Reset Database
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Table Container */}
+          <div className="bg-white/70 backdrop-blur-2xl border border-white/80 rounded-3xl overflow-hidden shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-50/60 border-b border-slate-200/60 text-slate-500 text-xs font-bold uppercase tracking-wider">
+                    <th className="py-4 px-5">LRN & Student Name</th>
+                    <th className="py-4 px-5">Section</th>
+                    <th className="py-4 px-5">Assigned Session</th>
+                    <th className="py-4 px-5">Exam Status</th>
+                    <th className="py-4 px-5 text-center">Form 4 Signed</th>
+                    {role === 'proctor' && <th className="py-4 px-5 text-right">Actions</th>}
                   </tr>
-                ) : (
-                  filteredStudents.map(student => (
-                    <tr key={student.id} className={`hover:bg-blue-50/30 transition ${!student.isEligible ? 'opacity-50 bg-slate-50/20' : ''}`}>
-                      <td className="py-4 px-5">
-                        <div className="font-bold text-slate-900 flex items-center gap-2">
-                          {student.name}
-                          {!student.isEligible && (
-                            <span className="bg-slate-100 text-slate-500 text-[10px] px-2 py-0.5 rounded-full font-mono flex items-center gap-1">
-                              <Ban className="w-3 h-3 text-rose-500" /> NLS
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-sm">
+                  {filteredStudents.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="py-12 text-center text-slate-400">
+                        No students found matching current filters.
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredStudents.map(student => (
+                      <tr key={student.id} className={`hover:bg-blue-50/30 transition ${!student.isEligible ? 'opacity-50 bg-slate-50/20' : ''}`}>
+                        <td className="py-4 px-5">
+                          <div className="font-bold text-slate-900 flex items-center gap-2">
+                            {student.name}
+                            {!student.isEligible && (
+                              <span className="bg-slate-100 text-slate-500 text-[10px] px-2 py-0.5 rounded-full font-mono flex items-center gap-1">
+                                <Ban className="w-3 h-3 text-rose-500" /> NLS
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-xs text-slate-400 font-mono mt-0.5">{student.lrn}</div>
+                          {student.customStatus && (
+                            <span className="inline-block mt-1 text-[11px] bg-purple-50 text-purple-700 border border-purple-200 px-2 py-0.5 rounded-md">
+                              Note: {student.customStatus}
                             </span>
                           )}
-                        </div>
-                        <div className="text-xs text-slate-400 font-mono mt-0.5">{student.lrn}</div>
-                        {student.customStatus && (
-                          <span className="inline-block mt-1 text-[11px] bg-purple-50 text-purple-700 border border-purple-200 px-2 py-0.5 rounded-md">
-                            Note: {student.customStatus}
+                        </td>
+
+                        <td className="py-4 px-5">
+                          <span className="inline-flex items-center px-3 py-1 rounded-xl text-xs font-semibold bg-slate-100/80 text-slate-700 border border-slate-200/60">
+                            {student.section}
                           </span>
-                        )}
-                      </td>
+                        </td>
 
-                      <td className="py-4 px-5">
-                        <span className="inline-flex items-center px-3 py-1 rounded-xl text-xs font-semibold bg-slate-100/80 text-slate-700 border border-slate-200/60">
-                          {student.section}
-                        </span>
-                      </td>
-
-                      <td className="py-4 px-5 text-slate-600 text-xs">
-                        <span className="px-3 py-1 rounded-xl border font-semibold bg-blue-50/80 text-blue-700 border-blue-200/60">
-                          {student.session}
-                        </span>
-                      </td>
-
-                      <td className="py-4 px-5">
-                        {role === 'proctor' && student.isEligible ? (
-                          <select
-                            value={student.status}
-                            onChange={e => handleStatusChange(student.id, e.target.value as Student['status'])}
-                            className={`text-xs font-semibold px-3 py-1.5 rounded-xl border focus:outline-none transition shadow-sm ${
-                              student.status === 'Completed'
-                                ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
-                                : student.status === 'In Exam'
-                                ? 'bg-amber-50 text-amber-700 border-amber-300'
-                                : student.status === 'Absent'
-                                ? 'bg-rose-50 text-rose-700 border-rose-300'
-                                : student.status === 'Forgot to Sign'
-                                ? 'bg-purple-50 text-purple-700 border-purple-300'
-                                : 'bg-white text-slate-600 border-slate-200'
-                            }`}
-                          >
-                            <option value="Not Started">Not Started</option>
-                            <option value="In Exam">In Exam</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Absent">Absent / Error</option>
-                            <option value="Forgot to Sign">Forgot to Sign Form 4</option>
-                            <option value="Ineligible">Ineligible (NLS)</option>
-                          </select>
-                        ) : (
-                          <span className={`inline-block text-xs font-semibold px-3 py-1 rounded-xl border ${
-                            student.status === 'Completed'
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                              : student.status === 'In Exam'
-                              ? 'bg-amber-50 text-amber-700 border-amber-200'
-                              : student.status === 'Absent'
-                              ? 'bg-rose-50 text-rose-700 border-rose-200'
-                              : 'bg-slate-100 text-slate-500 border-slate-200'
-                          }`}>
-                            {student.status}
+                        <td className="py-4 px-5 text-slate-600 text-xs">
+                          <span className="px-3 py-1 rounded-xl border font-semibold bg-blue-50/80 text-blue-700 border-blue-200/60">
+                            {student.session}
                           </span>
-                        )}
-                      </td>
+                        </td>
 
-                      <td className="py-4 px-5 text-center">
-                        <button
-                          disabled={role === 'adviser' || !student.isEligible}
-                          onClick={() => handleAttendanceToggle(student.id, student.signedAttendance)}
-                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold border transition ${
-                            student.signedAttendance
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
-                              : 'bg-slate-50 text-slate-400 border-slate-200'
-                          } ${role === 'adviser' || !student.isEligible ? 'cursor-not-allowed opacity-80' : 'hover:border-slate-300'}`}
-                        >
-                          {student.signedAttendance ? (
-                            <><CheckSquare className="w-3.5 h-3.5 text-emerald-600" /> Signed</>
+                        <td className="py-4 px-5">
+                          {role === 'proctor' && student.isEligible ? (
+                            <select
+                              value={student.status}
+                              onChange={e => handleStatusChange(student.id, e.target.value as Student['status'])}
+                              className={`text-xs font-semibold px-3 py-1.5 rounded-xl border focus:outline-none transition shadow-sm ${
+                                student.status === 'Completed'
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                                  : student.status === 'In Exam'
+                                  ? 'bg-amber-50 text-amber-700 border-amber-300'
+                                  : student.status === 'Absent'
+                                  ? 'bg-rose-50 text-rose-700 border-rose-300'
+                                  : student.status === 'Forgot to Sign'
+                                  ? 'bg-purple-50 text-purple-700 border-purple-300'
+                                  : 'bg-white text-slate-600 border-slate-200'
+                              }`}
+                            >
+                              <option value="Not Started">Not Started</option>
+                              <option value="In Exam">In Exam</option>
+                              <option value="Completed">Completed</option>
+                              <option value="Absent">Absent / Error</option>
+                              <option value="Forgot to Sign">Forgot to Sign Form 4</option>
+                              <option value="Ineligible">Ineligible (NLS)</option>
+                            </select>
                           ) : (
-                            <><Square className="w-3.5 h-3.5 text-slate-400" /> Unsigned</>
+                            <span className={`inline-block text-xs font-semibold px-3 py-1 rounded-xl border ${
+                              student.status === 'Completed'
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                : student.status === 'In Exam'
+                                ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                : student.status === 'Absent'
+                                ? 'bg-rose-50 text-rose-700 border-rose-200'
+                                : 'bg-slate-100 text-slate-500 border-slate-200'
+                            }`}>
+                              {student.status}
+                            </span>
                           )}
-                        </button>
-                      </td>
+                        </td>
 
-                      {role === 'proctor' && (
-                        <td className="py-4 px-5 text-right">
+                        <td className="py-4 px-5 text-center">
                           <button
-                            onClick={() => setEditingStudent(student)}
-                            className="inline-flex items-center gap-1 px-3 py-1 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-slate-600 hover:text-slate-900 text-xs font-semibold transition shadow-sm"
-                            title="Edit LRN, Schedule & Status"
+                            disabled={role === 'adviser' || !student.isEligible}
+                            onClick={() => handleAttendanceToggle(student.id, student.signedAttendance)}
+                            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold border transition ${
+                              student.signedAttendance
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                                : 'bg-slate-50 text-slate-400 border-slate-200'
+                            } ${role === 'adviser' || !student.isEligible ? 'cursor-not-allowed opacity-80' : 'hover:border-slate-300'}`}
                           >
-                            <Edit3 className="w-3.5 h-3.5 text-blue-600" /> Edit
+                            {student.signedAttendance ? (
+                              <><CheckSquare className="w-3.5 h-3.5 text-emerald-600" /> Signed</>
+                            ) : (
+                              <><Square className="w-3.5 h-3.5 text-slate-400" /> Unsigned</>
+                            )}
                           </button>
                         </td>
-                      )}
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+
+                        {role === 'proctor' && (
+                          <td className="py-4 px-5 text-right">
+                            <button
+                              onClick={() => setEditingStudent(student)}
+                              className="inline-flex items-center gap-1 px-3 py-1 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-slate-600 hover:text-slate-900 text-xs font-semibold transition shadow-sm"
+                              title="Edit LRN, Schedule & Status"
+                            >
+                              <Edit3 className="w-3.5 h-3.5 text-blue-600" /> Edit
+                            </button>
+                          </td>
+                        )}
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Session-Specific Total Test Takers Summary Bar */}
+            <div className="bg-slate-50/80 border-t border-slate-200/60 px-6 py-4 flex flex-wrap items-center justify-between text-xs font-bold text-slate-700 gap-2">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-blue-600" />
+                <span>
+                  Total Test Takers for Selected Session:{' '}
+                  <span className="text-blue-600 font-extrabold text-sm ml-1">
+                    {filteredStudents.length} Students
+                  </span>
+                </span>
+              </div>
+              <div className="text-slate-400 font-normal">
+                Active Filter:{' '}
+                <span className="font-semibold text-slate-700">
+                  {selectedSection === 'All' ? 'All Sections' : `Section ${selectedSection}`}
+                </span>{' '}
+                •{' '}
+                <span className="font-semibold text-slate-700">
+                  {selectedSession === 'All' ? 'All Sessions' : selectedSession}
+                </span>{' '}
+                •{' '}
+                <span className="font-semibold text-slate-700">
+                  {selectedStatus === 'All' ? 'All Statuses' : selectedStatus}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
+      <footer className="mt-12 pt-6 border-t border-slate-200/60 text-center text-xs font-semibold text-slate-400/80 tracking-wide uppercase">
+        Judimer Zarate — Bagonbon NHS NCAE 2026 Portal
+      </footer>
 
       {editingStudent && (
         <div className="fixed inset-0 bg-slate-900/30 backdrop-blur-md flex items-center justify-center p-4 z-50">
