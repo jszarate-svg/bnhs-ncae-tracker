@@ -173,7 +173,7 @@ export default function NCAETracker() {
   }, []);
 
   const getGreeting = () => {
-    if (!currentTime) return { text: 'Good day, Teacher!', icon: <Sun className="w-4 h-4 text-amber-500" /> };
+    if (!currentTime) return { text: 'Good day!', icon: <Sun className="w-4 h-4 text-amber-500" /> };
     const hour = currentTime.getHours();
     if (hour < 12) {
       return { text: 'Good morning!', icon: <Sunrise className="w-4 h-4 text-amber-500" /> };
@@ -360,7 +360,7 @@ export default function NCAETracker() {
 
   const greeting = getGreeting();
 
-  const glassContainerStyle = "bg-white/20 backdrop-blur-3xl border border-white/60 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] rounded-3xl relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/40 before:via-transparent before:to-transparent before:pointer-events-none";
+  const glassContainerStyle = "bg-white/20 backdrop-blur-3xl border border-white/60 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] rounded-3xl relative overflow-hidden";
   const glassCardStyle = "bg-white/30 backdrop-blur-3xl border border-white/70 shadow-[0_8px_32px_0_rgba(31,38,135,0.12)] rounded-3xl relative overflow-hidden transition-all duration-300 hover:shadow-[0_12px_40px_0_rgba(31,38,135,0.25)] hover:border-white/90 hover:bg-white/40";
 
   const rowsConfig = [
@@ -373,11 +373,11 @@ export default function NCAETracker() {
   if (!role) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-300/40 via-sky-200/50 via-purple-200/40 to-blue-300/50 text-slate-800 flex flex-col items-center justify-center p-4 font-sans relative overflow-hidden">
-        <div className="absolute top-10 left-10 w-[500px] h-[500px] bg-gradient-to-tr from-blue-400/40 to-indigo-500/30 rounded-full blur-[100px] animate-pulse pointer-events-none" />
-        <div className="absolute bottom-10 right-10 w-[500px] h-[500px] bg-gradient-to-br from-purple-400/40 to-pink-400/30 rounded-full blur-[100px] animate-pulse pointer-events-none" />
+        <div className="absolute top-10 left-10 w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-gradient-to-tr from-blue-400/40 to-indigo-500/30 rounded-full blur-[80px] sm:blur-[100px] animate-pulse pointer-events-none" />
+        <div className="absolute bottom-10 right-10 w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-gradient-to-br from-purple-400/40 to-pink-400/30 rounded-full blur-[80px] sm:blur-[100px] animate-pulse pointer-events-none" />
 
-        <div className="max-w-xl w-full text-center space-y-8 relative z-10">
-          <div className="inline-flex items-center gap-2 px-6 py-2.5 bg-white/30 backdrop-blur-3xl border border-white/80 rounded-full shadow-[0_8px_32px_0_rgba(31,38,135,0.15)]">
+        <div className="max-w-xl w-full text-center space-y-6 sm:space-y-8 relative z-10 px-2">
+          <div className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 bg-white/30 backdrop-blur-3xl border border-white/80 rounded-full shadow-sm">
             {greeting.icon}
             <span className="text-xs font-black tracking-wide text-slate-900">
               {greeting.text}
@@ -389,67 +389,67 @@ export default function NCAETracker() {
             )}
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             <h2 className="text-xs sm:text-sm font-black uppercase tracking-widest text-blue-700/90 drop-shadow-sm">
               Bagonbon National High School
             </h2>
-            <h1 className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tight drop-shadow-sm">
+            <h1 className="text-3xl sm:text-6xl font-black text-slate-900 tracking-tight drop-shadow-sm">
               NCAE 2026 Portal
             </h1>
-            <p className="text-slate-700 text-sm sm:text-base max-w-md mx-auto font-medium leading-relaxed pt-1">
-              Real-Time Examination Pull-Out & Session Directory
+            <p className="text-slate-700 text-xs sm:text-base max-w-md mx-auto font-medium leading-relaxed">
+              Real-Time Examination Pull-Out & Directory Portal
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-left pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 text-left pt-2">
             <button
               onClick={() => setShowPinModal(true)}
-              className={`${glassCardStyle} p-6 flex flex-col justify-between space-y-6 hover:-translate-y-1.5 group border-2 border-blue-400/40`}
+              className={`${glassCardStyle} p-5 sm:p-6 flex flex-col justify-between space-y-4 sm:space-y-6 group border-2 border-blue-400/40 active:scale-95 transition-transform`}
             >
-              <div className="space-y-4">
-                <div className="p-3.5 bg-blue-500/20 text-blue-800 rounded-2xl w-fit border border-white/80 shadow-inner flex items-center gap-2">
-                  <Shield className="w-6 h-6" />
+              <div className="space-y-3 sm:space-y-4">
+                <div className="p-3 bg-blue-500/20 text-blue-800 rounded-2xl w-fit border border-white/80 shadow-inner flex items-center gap-2">
+                  <Shield className="w-5 h-5 sm:w-6 sm:h-6" />
                   <Lock className="w-4 h-4 text-blue-700" />
                 </div>
-                <h3 className="text-lg font-black text-slate-900 group-hover:text-blue-700 transition-colors">
+                <h3 className="text-base sm:text-lg font-black text-slate-900 group-hover:text-blue-700 transition-colors">
                   Proctor Mode (PIN Locked)
                 </h3>
                 <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                  PIN-protected mode to manage schedules, mark Form 4 attendance, and assign laptop seating.
+                  PIN-protected mode to manage schedules, mark attendance, and assign laptop seating.
                 </p>
               </div>
-              <div className="flex items-center text-xs font-black text-blue-700 group-hover:translate-x-1 transition-transform">
+              <div className="flex items-center text-xs font-black text-blue-700">
                 Unlock Proctor Portal <ArrowRight className="w-4 h-4 ml-1" />
               </div>
             </button>
 
             <button
               onClick={() => setRole('adviser')}
-              className={`${glassCardStyle} p-6 flex flex-col justify-between space-y-6 hover:-translate-y-1.5 group border-2 border-emerald-400/40`}
+              className={`${glassCardStyle} p-5 sm:p-6 flex flex-col justify-between space-y-4 sm:space-y-6 group border-2 border-emerald-400/40 active:scale-95 transition-transform`}
             >
-              <div className="space-y-4">
-                <div className="p-3.5 bg-emerald-500/20 text-emerald-800 rounded-2xl w-fit border border-white/80 shadow-inner">
-                  <UserCheck className="w-6 h-6" />
+              <div className="space-y-3 sm:space-y-4">
+                <div className="p-3 bg-emerald-500/20 text-emerald-800 rounded-2xl w-fit border border-white/80 shadow-inner">
+                  <UserCheck className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
-                <h3 className="text-lg font-black text-slate-900 group-hover:text-emerald-700 transition-colors">
+                <h3 className="text-base sm:text-lg font-black text-slate-900 group-hover:text-emerald-700 transition-colors">
                   Advisers / Students Mode
                 </h3>
                 <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                  Public read-only lookup directory. Filter by Section (Thorndike, Gardner, Dewey) to check your assigned session and status.
+                  Public directory view. Filter by Section (Thorndike, Gardner, Dewey) to find your schedule.
                 </p>
               </div>
-              <div className="flex items-center text-xs font-black text-emerald-700 group-hover:translate-x-1 transition-transform">
+              <div className="flex items-center text-xs font-black text-emerald-700">
                 Enter Directory <ArrowRight className="w-4 h-4 ml-1" />
               </div>
             </button>
           </div>
 
-          <div className="pt-6 border-t border-white/50 flex items-center justify-center gap-2 text-xs font-bold text-slate-600">
+          <div className="pt-4 border-t border-white/50 flex items-center justify-center gap-2 text-xs font-bold text-slate-600">
             <span className={`inline-block w-2.5 h-2.5 rounded-full ${isConnected ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`}></span>
             {isConnected ? 'Connected to Supabase Realtime' : 'Connecting to Database...'}
           </div>
 
-          <div className="pt-2 text-[11px] font-black text-slate-500/80 tracking-widest uppercase">
+          <div className="text-[10px] sm:text-[11px] font-black text-slate-500/80 tracking-widest uppercase">
             JUDIMER ZARATE — BAGONBON NHS NCAE 2026 PORTAL
           </div>
         </div>
@@ -457,11 +457,11 @@ export default function NCAETracker() {
         {showPinModal && (
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-2xl flex items-center justify-center p-4 z-50">
             <div className="bg-white/30 backdrop-blur-3xl border border-white/80 rounded-3xl max-w-sm w-full p-6 shadow-[0_24px_48px_0_rgba(0,0,0,0.3)] space-y-5 text-center">
-              <div className="p-4 bg-blue-500/20 text-blue-900 rounded-full w-fit mx-auto border border-white">
-                <Lock className="w-8 h-8" />
+              <div className="p-3.5 bg-blue-500/20 text-blue-900 rounded-full w-fit mx-auto border border-white">
+                <Lock className="w-7 h-7" />
               </div>
               <div>
-                <h3 className="text-xl font-black text-slate-900">Enter Proctor PIN</h3>
+                <h3 className="text-lg font-black text-slate-900">Enter Proctor PIN</h3>
                 <p className="text-xs text-slate-700 font-bold mt-1">Authorized proctor access only</p>
               </div>
 
@@ -472,7 +472,7 @@ export default function NCAETracker() {
                 onChange={e => { setPinInput(e.target.value); setPinError(false); }}
                 onKeyDown={e => e.key === 'Enter' && handleProctorAccess()}
                 placeholder="Enter PIN..."
-                className="w-full text-center text-2xl tracking-[0.5em] font-mono bg-white/70 border border-white rounded-2xl py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-inner text-slate-900 font-bold"
+                className="w-full text-center text-xl sm:text-2xl tracking-[0.4em] font-mono bg-white/70 border border-white rounded-2xl py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-inner text-slate-900 font-bold"
                 autoFocus
               />
 
@@ -504,74 +504,70 @@ export default function NCAETracker() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-200/50 via-sky-100/60 via-purple-100/40 to-blue-200/50 text-slate-800 font-sans p-3 sm:p-6 lg:p-8 relative flex flex-col justify-between overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-200/50 via-sky-100/60 via-purple-100/40 to-blue-200/50 text-slate-800 font-sans p-2.5 sm:p-6 lg:p-8 relative flex flex-col justify-between overflow-x-hidden">
       
-      <div className="fixed top-0 left-1/4 w-[600px] h-[600px] bg-gradient-to-tr from-blue-300/30 to-indigo-400/20 rounded-full blur-[120px] pointer-events-none" />
-      <div className="fixed bottom-0 right-1/4 w-[600px] h-[600px] bg-gradient-to-br from-purple-300/30 to-pink-300/20 rounded-full blur-[120px] pointer-events-none" />
+      <div className="fixed top-0 left-1/4 w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] bg-gradient-to-tr from-blue-300/30 to-indigo-400/20 rounded-full blur-[100px] pointer-events-none" />
 
-      <div className="relative z-10">
-        <header className="max-w-7xl mx-auto mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/60 pb-6">
-          <div>
-            <div className="flex items-center gap-3">
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <div className="flex items-center gap-2 bg-white/30 backdrop-blur-3xl px-3.5 py-1.5 rounded-full border border-white/80 shadow-[0_4px_20px_0_rgba(31,38,135,0.08)] text-xs font-extrabold text-slate-900">
-                    {greeting.icon}
-                    {greeting.text}
-                  </div>
-                  <span className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-black backdrop-blur-3xl ${isConnected ? 'bg-emerald-500/20 text-emerald-900 border border-white/80 shadow-[0_4px_20px_0_rgba(31,38,135,0.08)]' : 'bg-rose-500/20 text-rose-900 border border-white/80'}`}>
-                    {isConnected ? <><Wifi className="w-3.5 h-3.5 text-emerald-700" /> Live Sync Active</> : <><WifiOff className="w-3.5 h-3.5 text-rose-700" /> Connecting...</>}
-                  </span>
-                </div>
-                <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-slate-900 mt-2 drop-shadow-sm">
-                  Bagonbon NHS — NCAE 2026 Portal
-                </h1>
-                <p className="text-slate-600 text-xs sm:text-sm mt-0.5 font-bold flex items-center gap-1.5">
-                  <Laptop className="w-4 h-4 text-blue-700" /> 15 Laptop Cap • Student & Adviser Pull-Out Schedule
-                </p>
+      <div className="relative z-10 space-y-4 sm:space-y-6">
+        <header className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/60 pb-4">
+          <div className="space-y-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex items-center gap-1.5 bg-white/30 backdrop-blur-3xl px-3 py-1 rounded-full border border-white/80 text-xs font-extrabold text-slate-900">
+                {greeting.icon}
+                {greeting.text}
               </div>
+              <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] sm:text-xs font-black backdrop-blur-3xl ${isConnected ? 'bg-emerald-500/20 text-emerald-900 border border-white/80' : 'bg-rose-500/20 text-rose-900 border border-white/80'}`}>
+                {isConnected ? <><Wifi className="w-3 h-3 text-emerald-700" /> Live Sync</> : <><WifiOff className="w-3 h-3 text-rose-700" /> Connecting...</>}
+              </span>
             </div>
+
+            <h1 className="text-xl sm:text-3xl font-black tracking-tight text-slate-900 drop-shadow-sm pt-1">
+              Bagonbon NHS — NCAE 2026 Portal
+            </h1>
+            <p className="text-slate-600 text-xs font-bold flex items-center gap-1">
+              <Laptop className="w-3.5 h-3.5 text-blue-700" /> 15 Laptops Cap • Session Directory
+            </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5 self-start md:self-auto">
+          <div className="flex flex-wrap items-center gap-2 pt-1 sm:pt-0">
             {role === 'proctor' && (
               <button
                 onClick={() => setShowSeatingMap(!showSeatingMap)}
-                className={`flex items-center gap-1.5 px-3.5 py-2 backdrop-blur-3xl border border-white/80 rounded-2xl text-xs font-black shadow-sm transition ${showSeatingMap ? 'bg-indigo-600 text-white' : 'bg-white/30 text-slate-800 hover:bg-white/50'}`}
+                className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 border border-white/80 rounded-2xl text-xs font-black transition ${showSeatingMap ? 'bg-indigo-600 text-white' : 'bg-white/30 text-slate-800'}`}
               >
-                <Grid className="w-4 h-4" />
-                {showSeatingMap ? 'Hide Map' : 'Show Seating Map'}
+                <Grid className="w-3.5 h-3.5" />
+                {showSeatingMap ? 'Hide Map' : 'Seating Map'}
               </button>
             )}
 
             <button
               onClick={() => setShowMetrics(!showMetrics)}
-              className="flex items-center gap-1.5 px-3.5 py-2 bg-white/30 backdrop-blur-3xl hover:bg-white/50 border border-white/80 rounded-2xl text-xs font-black text-slate-800 shadow-sm transition"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 bg-white/30 hover:bg-white/50 border border-white/80 rounded-2xl text-xs font-black text-slate-800 transition"
             >
-              <BarChart3 className="w-4 h-4 text-blue-700" />
+              <BarChart3 className="w-3.5 h-3.5 text-blue-700" />
               {showMetrics ? 'Hide Analytics' : 'Analytics'}
             </button>
 
             {role === 'proctor' && (
               <button
                 onClick={exportCSV}
-                className="flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xs font-black shadow-lg shadow-emerald-600/20 border border-emerald-400/50 transition"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 bg-emerald-600 text-white rounded-2xl text-xs font-black shadow-sm transition"
               >
-                <Download className="w-4 h-4" />
+                <Download className="w-3.5 h-3.5" />
                 Export
               </button>
             )}
 
-            <div className="flex items-center bg-white/30 backdrop-blur-3xl border border-white/80 p-1 rounded-2xl shadow-sm">
-              <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black ${
-                role === 'proctor' ? 'bg-blue-600 text-white shadow-md' : 'bg-emerald-600 text-white shadow-md'
+            <div className="flex items-center bg-white/30 backdrop-blur-3xl border border-white/80 p-1 rounded-2xl w-full sm:w-auto justify-between sm:justify-start">
+              <span className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-black ${
+                role === 'proctor' ? 'bg-blue-600 text-white' : 'bg-emerald-600 text-white'
               }`}>
                 {role === 'proctor' ? <Shield className="w-3.5 h-3.5" /> : <UserCheck className="w-3.5 h-3.5" />}
-                {role === 'proctor' ? 'Proctor' : 'Advisers / Students'}
+                {role === 'proctor' ? 'Proctor' : 'Advisers/Students'}
               </span>
               <button
                 onClick={() => setRole(null)}
-                className="flex items-center gap-1 px-2.5 py-1.5 text-slate-700 hover:text-slate-900 text-xs font-bold transition"
+                className="flex items-center gap-1 px-2.5 py-1.5 text-slate-700 hover:text-slate-900 text-xs font-bold"
               >
                 <LogOut className="w-3.5 h-3.5" /> Exit
               </button>
@@ -579,70 +575,65 @@ export default function NCAETracker() {
           </div>
         </header>
 
-        <div className="max-w-7xl mx-auto space-y-6">
+        <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between bg-white/20 backdrop-blur-3xl border border-white/70 p-2 rounded-3xl shadow-[0_8px_32px_0_rgba(31,38,135,0.12)] gap-2">
-            <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0">
+          {/* HORIZONTAL SCROLLABLE SECTION TABS FOR PHONES */}
+          <div className="bg-white/20 backdrop-blur-3xl border border-white/70 p-1.5 rounded-2xl shadow-sm">
+            <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5">
               {['All', 'Thorndike', 'Gardner', 'Dewey'].map((sec) => (
                 <button
                   key={sec}
                   onClick={() => setSelectedSection(sec)}
-                  className={`px-4 py-2 rounded-2xl text-xs font-black transition-all whitespace-nowrap ${
+                  className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap flex-shrink-0 ${
                     selectedSection === sec
-                      ? 'bg-white/80 text-blue-700 shadow-md shadow-blue-500/10 border border-white'
-                      : 'text-slate-700 hover:text-slate-900 hover:bg-white/30'
+                      ? 'bg-white/90 text-blue-700 shadow-sm border border-white'
+                      : 'text-slate-700 hover:bg-white/30'
                   }`}
                 >
                   {sec === 'All' ? 'All Sections' : `Section ${sec}`}
                 </button>
               ))}
             </div>
-
-            <div className="text-xs font-black text-slate-700 pr-3 text-right hidden sm:block">
-              Filtered: <span className="text-blue-800 font-black">{filteredStudents.length} Students</span>
-            </div>
           </div>
 
-          {/* INTERACTIVE SEATING MAP — RESTRICTED TO PROCTOR MODE */}
+          {/* INTERACTIVE SEATING MAP — EXCLUSIVELY FOR PROCTOR MODE */}
           {role === 'proctor' && showSeatingMap && (
-            <div className={`${glassContainerStyle} p-4 sm:p-6 space-y-4 border-2 border-indigo-300/60 shadow-2xl`}>
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/60 pb-3">
+            <div className={`${glassContainerStyle} p-3.5 sm:p-6 space-y-3 sm:space-y-4 border-2 border-indigo-300/60 shadow-xl`}>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/60 pb-3">
                 <div>
-                  <h3 className="text-sm font-black text-slate-900 flex items-center gap-2">
-                    <Laptop className="w-5 h-5 text-indigo-700" />
+                  <h3 className="text-xs sm:text-sm font-black text-slate-900 flex items-center gap-1.5">
+                    <Laptop className="w-4 h-4 text-indigo-700" />
                     Proctor Laptop Seating Map (1-4 | 5-8 | 9-12 | 13-15)
                   </h3>
-                  <p className="text-xs text-slate-700 font-medium mt-0.5">
-                    Viewing layout for <span className="font-black text-indigo-900">{selectedSession}</span>. Click any seat to reassign laptops.
+                  <p className="text-[11px] text-slate-700 font-medium">
+                    Session: <span className="font-black text-indigo-900">{selectedSession}</span>
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <select
-                    value={selectedSession}
-                    onChange={e => setSelectedSession(e.target.value)}
-                    className="w-full sm:w-auto bg-white/80 border border-white rounded-2xl px-3.5 py-1.5 text-xs text-slate-900 font-black shadow-inner"
-                  >
-                    {uniqueSessions.map(session => (
-                      <option key={session} value={session}>{session}</option>
-                    ))}
-                  </select>
-                </div>
+                <select
+                  value={selectedSession}
+                  onChange={e => setSelectedSession(e.target.value)}
+                  className="w-full sm:w-auto bg-white/80 border border-white rounded-xl px-3 py-1.5 text-xs text-slate-900 font-black shadow-inner"
+                >
+                  {uniqueSessions.map(session => (
+                    <option key={session} value={session}>{session}</option>
+                  ))}
+                </select>
               </div>
 
-              <div className="space-y-4 pt-1">
+              <div className="space-y-3 pt-1">
                 {rowsConfig.map(row => (
-                  <div key={row.rowNum} className="bg-white/30 backdrop-blur-2xl border border-white/80 rounded-2xl p-3 shadow-md space-y-2">
-                    <div className="flex items-center justify-between border-b border-white/50 pb-1.5">
-                      <span className="text-[11px] font-black uppercase text-indigo-950 tracking-wider">
-                        Table / Row {row.rowNum} (Seats {row.seats[0]} - {row.seats[row.seats.length - 1]})
+                  <div key={row.rowNum} className="bg-white/30 backdrop-blur-2xl border border-white/80 rounded-2xl p-2.5 shadow-sm space-y-2">
+                    <div className="flex items-center justify-between border-b border-white/50 pb-1">
+                      <span className="text-[10px] sm:text-[11px] font-black uppercase text-indigo-950 tracking-wider">
+                        Row {row.rowNum} (Seats {row.seats[0]}-{row.seats[row.seats.length - 1]})
                       </span>
-                      <span className="text-[10px] font-bold text-slate-600 bg-white/60 px-2 py-0.5 rounded-full border border-white">
+                      <span className="text-[9px] font-bold text-slate-600 bg-white/60 px-2 py-0.5 rounded-full border border-white">
                         {row.seats.length} Laptops
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                       {row.seats.map(seatNum => {
                         const assignedStudent = sessionStudents.find(s => s.assignedSeat === seatNum);
 
@@ -650,51 +641,43 @@ export default function NCAETracker() {
                           <button
                             key={seatNum}
                             onClick={() => setSelectedSeatModal(seatNum)}
-                            className={`p-2.5 rounded-2xl text-left border transition-all flex flex-col justify-between h-24 sm:h-28 relative ${
+                            className={`p-2 rounded-xl text-left border transition-all flex flex-col justify-between h-20 sm:h-28 relative ${
                               assignedStudent
                                 ? assignedStudent.status === 'Completed'
                                   ? 'bg-emerald-500/25 border-emerald-400 text-emerald-950 shadow-sm'
                                   : assignedStudent.status === 'In Exam'
                                   ? 'bg-amber-500/25 border-amber-400 text-amber-950 shadow-sm'
                                   : 'bg-blue-500/25 border-blue-400 text-blue-950 shadow-sm'
-                                : 'bg-white/60 border-white/80 hover:bg-white/90 text-slate-700'
+                                : 'bg-white/60 border-white/80 text-slate-700'
                             }`}
                           >
                             <div className="flex items-center justify-between w-full">
-                              <span className="text-[10px] font-black uppercase tracking-wider text-indigo-900">
+                              <span className="text-[9px] sm:text-[10px] font-black uppercase text-indigo-900">
                                 Laptop #{seatNum}
                               </span>
                               {assignedStudent ? (
-                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
                               ) : (
-                                <Laptop className="w-3.5 h-3.5 text-indigo-600" />
+                                <Laptop className="w-3 h-3 text-indigo-600" />
                               )}
                             </div>
 
                             <div>
                               {assignedStudent ? (
                                 <div>
-                                  <p className="text-xs font-black leading-tight line-clamp-1 sm:line-clamp-2 text-slate-900">
+                                  <p className="text-[11px] sm:text-xs font-black leading-tight line-clamp-1 text-slate-900">
                                     {assignedStudent.name}
                                   </p>
-                                  <p className="text-[10px] font-bold text-slate-600">
+                                  <p className="text-[9px] font-bold text-slate-600">
                                     {assignedStudent.section}
                                   </p>
                                 </div>
                               ) : (
-                                <p className="text-[10px] sm:text-[11px] font-bold text-slate-400 italic">
-                                  Click to Assign
+                                <p className="text-[10px] font-bold text-slate-400 italic">
+                                  Assign
                                 </p>
                               )}
                             </div>
-
-                            {assignedStudent && (
-                              <span className={`text-[9px] font-black px-1.5 py-0.2 rounded-md w-fit border ${
-                                assignedStudent.status === 'Completed' ? 'bg-emerald-100 border-emerald-300 text-emerald-800' : 'bg-white/80 border-white text-slate-700'
-                              }`}>
-                                {assignedStudent.status}
-                              </span>
-                            )}
                           </button>
                         );
                       })}
@@ -705,116 +688,118 @@ export default function NCAETracker() {
             </div>
           )}
 
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-3 sm:gap-4">
+          {/* STATS COUNTERS CARDS */}
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-2.5 sm:gap-4">
             <button
               onClick={() => setSelectedStatus('All')}
-              className={`${glassCardStyle} p-3.5 sm:p-4 text-left ${selectedStatus === 'All' ? 'border-blue-500/80 ring-4 ring-blue-500/20 bg-white/50' : ''}`}
+              className={`${glassCardStyle} p-3 text-left ${selectedStatus === 'All' ? 'border-blue-500 ring-2 ring-blue-500/20 bg-white/50' : ''}`}
             >
-              <p className="text-slate-600 text-[10px] sm:text-xs font-black uppercase tracking-wider">Total Students</p>
-              <p className="text-xl sm:text-2xl font-black text-slate-900 mt-1">{totalCount}</p>
+              <p className="text-slate-600 text-[9px] sm:text-xs font-black uppercase">Total Students</p>
+              <p className="text-lg sm:text-2xl font-black text-slate-900 mt-0.5">{totalCount}</p>
             </button>
 
             <button
               onClick={() => setSelectedStatus('In Exam')}
-              className={`${glassCardStyle} p-3.5 sm:p-4 text-left ${selectedStatus === 'In Exam' ? 'border-amber-500/80 ring-4 ring-amber-500/20 bg-white/50' : ''}`}
+              className={`${glassCardStyle} p-3 text-left ${selectedStatus === 'In Exam' ? 'border-amber-500 ring-2 ring-amber-500/20 bg-white/50' : ''}`}
             >
-              <p className="text-amber-700 text-[10px] sm:text-xs font-black uppercase tracking-wider">In Exam</p>
-              <p className="text-xl sm:text-2xl font-black text-amber-600 mt-1">{inExam}</p>
+              <p className="text-amber-700 text-[9px] sm:text-xs font-black uppercase">In Exam</p>
+              <p className="text-lg sm:text-2xl font-black text-amber-600 mt-0.5">{inExam}</p>
             </button>
 
             <button
               onClick={() => setSelectedStatus('Completed')}
-              className={`${glassCardStyle} p-3.5 sm:p-4 text-left ${selectedStatus === 'Completed' ? 'border-emerald-500/80 ring-4 ring-emerald-500/20 bg-white/50' : ''}`}
+              className={`${glassCardStyle} p-3 text-left ${selectedStatus === 'Completed' ? 'border-emerald-500 ring-2 ring-emerald-500/20 bg-white/50' : ''}`}
             >
-              <p className="text-emerald-700 text-[10px] sm:text-xs font-black uppercase tracking-wider">Completed</p>
-              <p className="text-xl sm:text-2xl font-black text-emerald-600 mt-1">{completed}</p>
+              <p className="text-emerald-700 text-[9px] sm:text-xs font-black uppercase">Completed</p>
+              <p className="text-lg sm:text-2xl font-black text-emerald-600 mt-0.5">{completed}</p>
             </button>
 
             <button
               onClick={() => setSelectedStatus('Absent')}
-              className={`${glassCardStyle} p-3.5 sm:p-4 text-left ${selectedStatus === 'Absent' ? 'border-rose-500/80 ring-4 ring-rose-500/20 bg-white/50' : ''}`}
+              className={`${glassCardStyle} p-3 text-left ${selectedStatus === 'Absent' ? 'border-rose-500 ring-2 ring-rose-500/20 bg-white/50' : ''}`}
             >
-              <p className="text-rose-700 text-[10px] sm:text-xs font-black uppercase tracking-wider">Absent / Error</p>
-              <p className="text-xl sm:text-2xl font-black text-rose-600 mt-1">{absent}</p>
+              <p className="text-rose-700 text-[9px] sm:text-xs font-black uppercase">Absent / Error</p>
+              <p className="text-lg sm:text-2xl font-black text-rose-600 mt-0.5">{absent}</p>
             </button>
 
             <button
               onClick={() => setSelectedStatus('Forgot to Sign')}
-              className={`${glassCardStyle} p-3.5 sm:p-4 text-left ${selectedStatus === 'Forgot to Sign' ? 'border-purple-500/80 ring-4 ring-purple-500/20 bg-white/50' : ''}`}
+              className={`${glassCardStyle} p-3 text-left ${selectedStatus === 'Forgot to Sign' ? 'border-purple-500 ring-2 ring-purple-500/20 bg-white/50' : ''}`}
             >
-              <p className="text-purple-700 text-[10px] sm:text-xs font-black uppercase tracking-wider">Unsigned Form 4</p>
-              <p className="text-xl sm:text-2xl font-black text-purple-600 mt-1">{forgotSign}</p>
+              <p className="text-purple-700 text-[9px] sm:text-xs font-black uppercase">Unsigned Form 4</p>
+              <p className="text-lg sm:text-2xl font-black text-purple-600 mt-0.5">{forgotSign}</p>
             </button>
 
             <button
               onClick={() => setSelectedStatus('Ineligible')}
-              className={`${glassCardStyle} p-3.5 sm:p-4 text-left col-span-2 md:col-span-1 ${selectedStatus === 'Ineligible' ? 'border-slate-500/80 ring-4 ring-slate-500/20 bg-white/50' : ''}`}
+              className={`${glassCardStyle} p-3 text-left col-span-2 md:col-span-1 ${selectedStatus === 'Ineligible' ? 'border-slate-500 ring-2 ring-slate-500/20 bg-white/50' : ''}`}
             >
-              <p className="text-slate-600 text-[10px] sm:text-xs font-black uppercase tracking-wider">Ineligible (NLS)</p>
-              <p className="text-xl sm:text-2xl font-black text-slate-500 mt-1">{ineligibleCount}</p>
+              <p className="text-slate-600 text-[9px] sm:text-xs font-black uppercase">Ineligible (NLS)</p>
+              <p className="text-lg sm:text-2xl font-black text-slate-500 mt-0.5">{ineligibleCount}</p>
             </button>
           </div>
 
           {showMetrics && (
-            <div className={`${glassContainerStyle} p-4 sm:p-5 space-y-4`}>
-              <div className="flex items-center justify-between border-b border-white/60 pb-3">
-                <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-2">
-                  <BarChart3 className="w-4 h-4 text-emerald-700" /> Per-Section Exam Completion Progress
+            <div className={`${glassContainerStyle} p-3.5 sm:p-5 space-y-3`}>
+              <div className="flex items-center justify-between border-b border-white/60 pb-2">
+                <h3 className="text-xs font-black uppercase text-slate-800 flex items-center gap-1.5">
+                  <BarChart3 className="w-3.5 h-3.5 text-emerald-700" /> Per-Section Exam Completion Progress
                 </h3>
-                <span className="text-[11px] font-mono text-emerald-700 font-black">Live Sync</span>
+                <span className="text-[10px] font-mono text-emerald-700 font-black">Live Sync</span>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 pt-1">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div>
-                  <div className="flex justify-between text-xs font-black mb-1.5">
-                    <span className="text-slate-800">Thorndike ({thorndikeCompleted}/{thorndikeCount} Completed)</span>
+                  <div className="flex justify-between text-xs font-black mb-1">
+                    <span className="text-slate-800">Thorndike ({thorndikeCompleted}/{thorndikeCount})</span>
                     <span className="text-blue-700">{Math.round((thorndikeCompleted / thorndikeCount) * 100)}%</span>
                   </div>
-                  <div className="w-full bg-white/40 border border-white/60 rounded-full h-3.5 overflow-hidden p-0.5 shadow-inner">
-                    <div className="bg-blue-600 h-2.5 rounded-full transition-all duration-500 shadow-sm" style={{ width: `${(thorndikeCompleted / thorndikeCount) * 100}%` }}></div>
+                  <div className="w-full bg-white/40 border border-white/60 rounded-full h-3 overflow-hidden p-0.5">
+                    <div className="bg-blue-600 h-2 rounded-full transition-all duration-500" style={{ width: `${(thorndikeCompleted / thorndikeCount) * 100}%` }}></div>
                   </div>
                 </div>
 
                 <div>
-                  <div className="flex justify-between text-xs font-black mb-1.5">
-                    <span className="text-slate-800">Gardner ({gardnerCompleted}/{gardnerCount} Completed)</span>
+                  <div className="flex justify-between text-xs font-black mb-1">
+                    <span className="text-slate-800">Gardner ({gardnerCompleted}/{gardnerCount})</span>
                     <span className="text-emerald-700">{Math.round((gardnerCompleted / gardnerCount) * 100)}%</span>
                   </div>
-                  <div className="w-full bg-white/40 border border-white/60 rounded-full h-3.5 overflow-hidden p-0.5 shadow-inner">
-                    <div className="bg-emerald-600 h-2.5 rounded-full transition-all duration-500 shadow-sm" style={{ width: `${(gardnerCompleted / gardnerCount) * 100}%` }}></div>
+                  <div className="w-full bg-white/40 border border-white/60 rounded-full h-3 overflow-hidden p-0.5">
+                    <div className="bg-emerald-600 h-2 rounded-full transition-all duration-500" style={{ width: `${(gardnerCompleted / gardnerCount) * 100}%` }}></div>
                   </div>
                 </div>
 
                 <div>
-                  <div className="flex justify-between text-xs font-black mb-1.5">
-                    <span className="text-slate-800">Dewey ({deweyCompleted}/{deweyCount} Completed)</span>
+                  <div className="flex justify-between text-xs font-black mb-1">
+                    <span className="text-slate-800">Dewey ({deweyCompleted}/{deweyCount})</span>
                     <span className="text-purple-700">{Math.round((deweyCompleted / deweyCount) * 100)}%</span>
                   </div>
-                  <div className="w-full bg-white/40 border border-white/60 rounded-full h-3.5 overflow-hidden p-0.5 shadow-inner">
-                    <div className="bg-purple-600 h-2.5 rounded-full transition-all duration-500 shadow-sm" style={{ width: `${(deweyCompleted / deweyCount) * 100}%` }}></div>
+                  <div className="w-full bg-white/40 border border-white/60 rounded-full h-3 overflow-hidden p-0.5">
+                    <div className="bg-purple-600 h-2 rounded-full transition-all duration-500" style={{ width: `${(deweyCompleted / deweyCount) * 100}%` }}></div>
                   </div>
                 </div>
               </div>
             </div>
           )}
 
-          <div className={`${glassContainerStyle} p-4 flex flex-wrap gap-3 items-center justify-between`}>
-            <div className="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
-              <div className="relative flex-1 min-w-[180px]">
-                <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+          {/* SEARCH & FILTERS BAR */}
+          <div className={`${glassContainerStyle} p-3 flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center justify-between`}>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
                 <input
                   type="text"
-                  placeholder="Search your name or LRN..."
+                  placeholder="Search student name or LRN..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full bg-white/50 border border-white/80 rounded-2xl pl-10 pr-4 py-2 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-blue-500 shadow-inner font-bold"
+                  className="w-full bg-white/50 border border-white/80 rounded-xl pl-9 pr-3 py-2 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-blue-500 shadow-inner font-bold"
                 />
               </div>
 
               <select
                 value={selectedSession}
                 onChange={e => setSelectedSession(e.target.value)}
-                className="bg-white/50 border border-white/80 rounded-2xl px-3 py-2 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-blue-500 shadow-inner font-black"
+                className="bg-white/50 border border-white/80 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-800 focus:outline-none font-black"
               >
                 <option value="All">All Sessions (Day 1 - Day 3)</option>
                 {uniqueSessions.map(session => (
@@ -825,7 +810,7 @@ export default function NCAETracker() {
               <select
                 value={selectedStatus}
                 onChange={e => setSelectedStatus(e.target.value)}
-                className="bg-white/50 border border-white/80 rounded-2xl px-3 py-2 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-blue-500 shadow-inner font-black"
+                className="bg-white/50 border border-white/80 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-800 focus:outline-none font-black"
               >
                 <option value="All">All Statuses</option>
                 <option value="Not Started">Not Started</option>
@@ -838,19 +823,127 @@ export default function NCAETracker() {
             </div>
 
             {role === 'proctor' && (
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                <button
-                  onClick={handleForceReset}
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-xs font-black shadow-lg shadow-blue-500/30 border border-blue-400/50 transition"
-                >
-                  <RefreshCw className="w-3.5 h-3.5" /> Reset Schedule
-                </button>
-              </div>
+              <button
+                onClick={handleForceReset}
+                className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-600 text-white rounded-xl text-xs font-black shadow-sm transition"
+              >
+                <RefreshCw className="w-3.5 h-3.5" /> Reset Schedule
+              </button>
             )}
           </div>
 
-          <div className={`${glassContainerStyle} shadow-[0_16px_48px_0_rgba(31,38,135,0.2)]`}>
-            <div className="overflow-x-auto">
+          {/* MOBILE DIRECTORY LIST VIEW (< md screens) & DESKTOP TABLE VIEW (>= md screens) */}
+          <div className={`${glassContainerStyle} p-2 sm:p-0`}>
+            
+            {/* MOBILE CARD VIEW */}
+            <div className="block md:hidden space-y-2.5">
+              {filteredStudents.length === 0 ? (
+                <div className="p-8 text-center text-slate-600 font-bold text-xs">
+                  No students found matching current filters.
+                </div>
+              ) : (
+                filteredStudents.map(student => (
+                  <div key={student.id} className="bg-white/40 backdrop-blur-2xl border border-white/80 rounded-2xl p-3 space-y-2.5 shadow-sm">
+                    <div className="flex items-start justify-between gap-2 border-b border-white/60 pb-2">
+                      <div>
+                        <div 
+                          className={`font-black text-slate-900 text-xs flex items-center gap-1.5 ${role === 'proctor' ? 'text-blue-900' : ''}`}
+                          onClick={() => role === 'proctor' && setEditingStudent(student)}
+                        >
+                          {student.name}
+                          {role === 'proctor' && <Edit3 className="w-3 h-3 text-slate-400" />}
+                        </div>
+                        <div className="text-[11px] text-slate-500 font-mono font-bold mt-0.5">{student.lrn}</div>
+                      </div>
+
+                      <span className="px-2 py-0.5 rounded-lg text-[10px] font-black bg-white/70 text-slate-800 border border-white">
+                        {student.section}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="bg-white/30 p-2 rounded-xl border border-white/60">
+                        <span className="text-[9px] font-black uppercase text-slate-500 block">Session & Laptop</span>
+                        {role === 'proctor' && student.isEligible ? (
+                          <select
+                            value={student.session}
+                            onChange={e => handleSessionDirectChange(student.id, e.target.value)}
+                            className="w-full bg-blue-50/90 text-blue-900 font-black border border-blue-200 rounded-lg p-1 text-[11px] mt-1"
+                          >
+                            <option value="Day 1 - Session 1">Day 1 - Session 1</option>
+                            <option value="Day 1 - Session 2">Day 1 - Session 2</option>
+                            <option value="Day 2 - Session 1">Day 2 - Session 1</option>
+                            <option value="Day 2 - Session 2">Day 2 - Session 2</option>
+                            <option value="Day 3 - Session 1">Day 3 - Session 1</option>
+                            <option value="Day 3 - Session 2">Day 3 - Session 2</option>
+                            <option value="Make-up Session">Make-up Session</option>
+                            <option value="Non-Pullout">Non-Pullout</option>
+                          </select>
+                        ) : (
+                          <p className="font-black text-blue-900 text-[11px] mt-0.5">
+                            {student.session} {student.assignedSeat ? `(#${student.assignedSeat})` : ''}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="bg-white/30 p-2 rounded-xl border border-white/60">
+                        <span className="text-[9px] font-black uppercase text-slate-500 block">Exam Status</span>
+                        {role === 'proctor' && student.isEligible ? (
+                          <select
+                            value={student.status}
+                            onChange={e => handleStatusChange(student.id, e.target.value as Student['status'])}
+                            className="w-full bg-white/80 text-slate-900 font-black border border-slate-200 rounded-lg p-1 text-[11px] mt-1"
+                          >
+                            <option value="Not Started">Not Started</option>
+                            <option value="In Exam">In Exam</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Absent">Absent / Error</option>
+                            <option value="Forgot to Sign">Forgot to Sign Form 4</option>
+                            <option value="Ineligible">Ineligible (NLS)</option>
+                          </select>
+                        ) : (
+                          <p className="font-black text-slate-800 text-[11px] mt-0.5">
+                            {student.status}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-1 border-t border-white/40 text-xs">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-black text-slate-600">Form 4:</span>
+                        {role === 'proctor' && student.isEligible ? (
+                          <select
+                            value={student.signedAttendance ? 'signed' : 'unsigned'}
+                            onChange={e => handleAttendanceChange(student.id, e.target.value === 'signed')}
+                            className="bg-white/80 text-slate-900 font-black border border-slate-200 rounded-lg px-2 py-0.5 text-[10px]"
+                          >
+                            <option value="signed">✓ Signed</option>
+                            <option value="unsigned">✕ Unsigned</option>
+                          </select>
+                        ) : (
+                          <span className={`text-[10px] font-black ${student.signedAttendance ? 'text-emerald-700' : 'text-rose-700'}`}>
+                            {student.signedAttendance ? '✓ Signed' : '✕ Unsigned'}
+                          </span>
+                        )}
+                      </div>
+
+                      {role === 'proctor' && (
+                        <button
+                          onClick={() => setEditingStudent(student)}
+                          className="px-2.5 py-1 bg-white/80 hover:bg-white rounded-lg text-[10px] font-black text-blue-800 border border-white"
+                        >
+                          Edit
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* DESKTOP TABLE VIEW */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-white/30 border-b border-white/60 text-slate-600 text-xs font-black uppercase tracking-wider">
@@ -874,12 +967,11 @@ export default function NCAETracker() {
                       <tr key={student.id} className={`hover:bg-white/40 transition ${!student.isEligible ? 'opacity-50 bg-slate-100/20' : ''}`}>
                         <td className="py-4 px-5">
                           <div 
-                            className={`font-black text-slate-900 flex items-center gap-2 ${role === 'proctor' ? 'cursor-pointer hover:text-blue-700 transition' : ''}`}
+                            className={`font-black text-slate-900 flex items-center gap-2 ${role === 'proctor' ? 'cursor-pointer hover:text-blue-700' : ''}`}
                             onClick={() => role === 'proctor' && setEditingStudent(student)}
-                            title={role === 'proctor' ? "Click to Edit Student Name & Details" : ""}
                           >
                             {student.name}
-                            {role === 'proctor' && <Edit3 className="w-3 h-3 text-slate-400 opacity-60 hover:opacity-100" />}
+                            {role === 'proctor' && <Edit3 className="w-3 h-3 text-slate-400 opacity-60" />}
                             {!student.isEligible && (
                               <span className="bg-white/60 text-slate-600 text-[10px] px-2 py-0.5 rounded-full font-mono font-bold flex items-center gap-1 border border-white">
                                 <Ban className="w-3 h-3 text-rose-500" /> NLS
@@ -887,11 +979,6 @@ export default function NCAETracker() {
                             )}
                           </div>
                           <div className="text-xs text-slate-500 font-mono font-bold mt-0.5">{student.lrn}</div>
-                          {student.customStatus && (
-                            <span className="inline-block mt-1 text-[11px] bg-purple-50/80 text-purple-800 border border-purple-200 px-2 py-0.5 rounded-md font-bold">
-                              Note: {student.customStatus}
-                            </span>
-                          )}
                         </td>
 
                         <td className="py-4 px-5">
@@ -906,7 +993,7 @@ export default function NCAETracker() {
                               <select
                                 value={student.session}
                                 onChange={e => handleSessionDirectChange(student.id, e.target.value)}
-                                className="bg-blue-50/90 hover:bg-blue-100/90 text-blue-900 font-black border border-blue-200 rounded-xl px-3 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 transition cursor-pointer shadow-sm"
+                                className="bg-blue-50/90 text-blue-900 font-black border border-blue-200 rounded-xl px-3 py-1 text-xs focus:outline-none shadow-sm"
                               >
                                 <option value="Day 1 - Session 1">Day 1 - Session 1</option>
                                 <option value="Day 1 - Session 2">Day 1 - Session 2</option>
@@ -935,17 +1022,7 @@ export default function NCAETracker() {
                             <select
                               value={student.status}
                               onChange={e => handleStatusChange(student.id, e.target.value as Student['status'])}
-                              className={`text-xs font-black px-3 py-1.5 rounded-xl border focus:outline-none transition shadow-sm ${
-                                student.status === 'Completed'
-                                  ? 'bg-emerald-50/90 text-emerald-900 border-emerald-300'
-                                  : student.status === 'In Exam'
-                                  ? 'bg-amber-50/90 text-amber-900 border-amber-300'
-                                  : student.status === 'Absent'
-                                  ? 'bg-rose-50/90 text-rose-900 border-rose-300'
-                                  : student.status === 'Forgot to Sign'
-                                  ? 'bg-purple-50/90 text-purple-900 border-purple-300'
-                                  : 'bg-white/80 text-slate-700 border-slate-200'
-                              }`}
+                              className="text-xs font-black px-3 py-1.5 rounded-xl border shadow-sm bg-white/80 text-slate-700"
                             >
                               <option value="Not Started">Not Started</option>
                               <option value="In Exam">In Exam</option>
@@ -955,15 +1032,7 @@ export default function NCAETracker() {
                               <option value="Ineligible">Ineligible (NLS)</option>
                             </select>
                           ) : (
-                            <span className={`inline-block text-xs font-black px-3 py-1 rounded-xl border ${
-                              student.status === 'Completed'
-                                ? 'bg-emerald-50/90 text-emerald-900 border-emerald-200'
-                                : student.status === 'In Exam'
-                                ? 'bg-amber-50/90 text-amber-900 border-amber-200'
-                                : student.status === 'Absent'
-                                ? 'bg-rose-50/90 text-rose-900 border-rose-200'
-                                : 'bg-slate-100/90 text-slate-600 border-slate-200'
-                            }`}>
+                            <span className="inline-block text-xs font-black px-3 py-1 rounded-xl border bg-slate-100 text-slate-800">
                               {student.status}
                             </span>
                           )}
@@ -974,21 +1043,13 @@ export default function NCAETracker() {
                             <select
                               value={student.signedAttendance ? 'signed' : 'unsigned'}
                               onChange={e => handleAttendanceChange(student.id, e.target.value === 'signed')}
-                              className={`text-xs font-black px-3 py-1.5 rounded-xl border focus:outline-none transition shadow-sm cursor-pointer ${
-                                student.signedAttendance
-                                  ? 'bg-emerald-50/90 text-emerald-900 border-emerald-300'
-                                  : 'bg-rose-50/90 text-rose-900 border-rose-300'
-                              }`}
+                              className="text-xs font-black px-3 py-1.5 rounded-xl border bg-white/80"
                             >
                               <option value="signed">✓ Signed Form 4</option>
                               <option value="unsigned">✕ Unsigned</option>
                             </select>
                           ) : (
-                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black border ${
-                              student.signedAttendance
-                                ? 'bg-emerald-50/90 text-emerald-900 border-emerald-300'
-                                : 'bg-white/40 text-slate-500 border-white/60'
-                            }`}>
+                            <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-xl text-xs font-black ${student.signedAttendance ? 'text-emerald-900' : 'text-slate-500'}`}>
                               {student.signedAttendance ? '✓ Signed Form 4' : '✕ Unsigned'}
                             </span>
                           )}
@@ -998,8 +1059,7 @@ export default function NCAETracker() {
                           <td className="py-4 px-5 text-right">
                             <button
                               onClick={() => setEditingStudent(student)}
-                              className="inline-flex items-center gap-1 px-3 py-1 bg-white/80 hover:bg-white border border-white rounded-xl text-slate-800 hover:text-slate-900 text-xs font-black transition shadow-sm"
-                              title="Edit Student Name, LRN, Schedule & Status"
+                              className="inline-flex items-center gap-1 px-3 py-1 bg-white/80 hover:bg-white border border-white rounded-xl text-slate-800 text-xs font-black shadow-sm"
                             >
                               <Edit3 className="w-3.5 h-3.5 text-blue-700" /> Edit
                             </button>
@@ -1012,46 +1072,27 @@ export default function NCAETracker() {
               </table>
             </div>
 
-            <div className="bg-white/40 backdrop-blur-3xl border-t border-white/60 px-6 py-4 flex flex-wrap items-center justify-between text-xs font-black text-slate-800 gap-2">
-              <div className="flex items-center gap-2">
+            <div className="bg-white/40 backdrop-blur-3xl border-t border-white/60 px-4 sm:px-6 py-3 flex items-center justify-between text-xs font-black text-slate-800">
+              <div className="flex items-center gap-1.5">
                 <Users className="w-4 h-4 text-blue-700" />
-                <span>
-                  Students in Filter:{' '}
-                  <span className="text-blue-800 font-black text-sm ml-1">
-                    {filteredStudents.length} Students
-                  </span>
-                </span>
-              </div>
-              <div className="text-slate-600 font-bold">
-                Active Filter:{' '}
-                <span className="font-black text-slate-900">
-                  {selectedSection === 'All' ? 'All Sections' : `Section ${selectedSection}`}
-                </span>{' '}
-                •{' '}
-                <span className="font-black text-slate-900">
-                  {selectedSession === 'All' ? 'All Days/Sessions' : selectedSession}
-                </span>{' '}
-                •{' '}
-                <span className="font-black text-slate-900">
-                  {selectedStatus === 'All' ? 'All Statuses' : selectedStatus}
-                </span>
+                <span>Filtered: <span className="text-blue-800 font-black">{filteredStudents.length} Students</span></span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <footer className="mt-12 pt-6 border-t border-white/60 text-center text-xs font-black text-slate-500/80 tracking-widest uppercase relative z-10">
+      <footer className="mt-8 pt-4 border-t border-white/60 text-center text-[10px] sm:text-xs font-black text-slate-500/80 tracking-widest uppercase relative z-10">
         JUDIMER ZARATE — BAGONBON NHS NCAE 2026 PORTAL
       </footer>
 
-      {/* SEAT / LAPTOP ASSIGNMENT MODAL (PROCTOR ONLY) */}
+      {/* SEAT / LAPTOP ASSIGNMENT MODAL */}
       {selectedSeatModal && role === 'proctor' && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-2xl flex items-center justify-center p-4 z-50">
-          <div className="bg-white/30 backdrop-blur-3xl border border-white/80 rounded-3xl max-w-md w-full p-6 shadow-[0_24px_48px_0_rgba(0,0,0,0.3)] space-y-4">
+          <div className="bg-white/30 backdrop-blur-3xl border border-white/80 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-white/60 pb-3">
               <div>
-                <h3 className="text-lg font-black text-slate-900">Assign Student to Laptop #{selectedSeatModal}</h3>
+                <h3 className="text-base sm:text-lg font-black text-slate-900">Assign Laptop #{selectedSeatModal}</h3>
                 <p className="text-xs text-blue-900 font-black mt-0.5">Session: {selectedSession}</p>
               </div>
               <button
@@ -1062,16 +1103,12 @@ export default function NCAETracker() {
               </button>
             </div>
 
-            <p className="text-xs text-slate-700 font-medium leading-relaxed">
-              Select a student from <span className="font-black text-slate-900">{selectedSession}</span> to place at Laptop #{selectedSeatModal}:
-            </p>
-
             <div className="max-h-60 overflow-y-auto space-y-2 pr-1">
               <button
                 onClick={() => handleAssignSeat(selectedSeatModal, null)}
-                className="w-full p-3 bg-rose-500/20 hover:bg-rose-500/30 border border-rose-300 rounded-2xl text-left text-xs font-black text-rose-900 transition flex items-center justify-between"
+                className="w-full p-2.5 bg-rose-500/20 hover:bg-rose-500/30 border border-rose-300 rounded-xl text-left text-xs font-black text-rose-900 transition flex items-center justify-between"
               >
-                <span>✕ Leave Laptop Unassigned / Clear Seat</span>
+                <span>✕ Clear Laptop Assignment</span>
               </button>
 
               {sessionStudents.filter(s => s.isEligible).map(student => {
@@ -1081,7 +1118,7 @@ export default function NCAETracker() {
                   <button
                     key={student.id}
                     onClick={() => handleAssignSeat(selectedSeatModal, student.id)}
-                    className={`w-full p-3 rounded-2xl text-left text-xs font-bold transition flex items-center justify-between border ${
+                    className={`w-full p-2.5 rounded-xl text-left text-xs font-bold transition flex items-center justify-between border ${
                       isCurrentlySeatedHere
                         ? 'bg-indigo-600 text-white border-indigo-500 shadow-md'
                         : 'bg-white/60 hover:bg-white/90 border-white text-slate-900'
@@ -1089,13 +1126,13 @@ export default function NCAETracker() {
                   >
                     <div>
                       <p className="font-black">{student.name}</p>
-                      <p className={`text-[10px] font-medium ${isCurrentlySeatedHere ? 'text-indigo-200' : 'text-slate-600'}`}>
+                      <p className={`text-[10px] ${isCurrentlySeatedHere ? 'text-indigo-200' : 'text-slate-600'}`}>
                         {student.section} • {student.lrn}
                       </p>
                     </div>
 
                     {student.assignedSeat && !isCurrentlySeatedHere ? (
-                      <span className="text-[10px] font-black bg-white/80 text-slate-700 px-2 py-0.5 rounded-full border border-slate-200">
+                      <span className="text-[10px] font-black bg-white/80 text-slate-700 px-2 py-0.5 rounded-full border">
                         Laptop #{student.assignedSeat}
                       </span>
                     ) : isCurrentlySeatedHere ? (
@@ -1109,7 +1146,7 @@ export default function NCAETracker() {
             <div className="pt-2 border-t border-white/60 text-right">
               <button
                 onClick={() => setSelectedSeatModal(null)}
-                className="px-4 py-2 bg-white/60 hover:bg-white text-slate-800 rounded-2xl text-xs font-black transition border border-white"
+                className="px-4 py-2 bg-white/60 hover:bg-white text-slate-800 rounded-xl text-xs font-black border border-white"
               >
                 Close
               </button>
@@ -1120,59 +1157,52 @@ export default function NCAETracker() {
 
       {editingStudent && role === 'proctor' && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-2xl flex items-center justify-center p-4 z-50">
-          <div className="bg-white/30 backdrop-blur-3xl border border-white/80 rounded-3xl max-w-md w-full p-6 shadow-[0_24px_48px_0_rgba(0,0,0,0.3)] space-y-4">
+          <div className="bg-white/30 backdrop-blur-3xl border border-white/80 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4">
             <div>
-              <h3 className="text-lg font-black text-slate-900">Edit Student Record</h3>
-              <p className="text-xs text-blue-800 font-black mt-0.5">Section: {editingStudent.section}</p>
+              <h3 className="text-base sm:text-lg font-black text-slate-900">Edit Student Record</h3>
+              <p className="text-xs text-blue-800 font-black">Section: {editingStudent.section}</p>
             </div>
 
-            <form onSubmit={handleSaveEdit} className="space-y-4">
+            <form onSubmit={handleSaveEdit} className="space-y-3">
               <div>
-                <label className="block text-xs font-black text-slate-800 mb-1 flex items-center gap-1.5">
-                  <User className="w-3.5 h-3.5 text-blue-700" /> Full Name
-                </label>
+                <label className="block text-xs font-black text-slate-800 mb-1">Full Name</label>
                 <input
                   type="text"
                   value={editingStudent.name}
                   onChange={e => setEditingStudent({ ...editingStudent, name: e.target.value })}
-                  className="w-full bg-white/60 border border-white/80 rounded-2xl px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500 font-bold shadow-inner"
+                  className="w-full bg-white/60 border border-white/80 rounded-xl px-3 py-2 text-xs font-bold text-slate-900"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-black text-slate-800 mb-1 flex items-center gap-1.5">
-                  <Hash className="w-3.5 h-3.5 text-blue-700" /> Learner Reference Number (LRN)
-                </label>
+                <label className="block text-xs font-black text-slate-800 mb-1">LRN</label>
                 <input
                   type="text"
                   value={editingStudent.lrn}
                   onChange={e => setEditingStudent({ ...editingStudent, lrn: e.target.value })}
-                  className="w-full bg-white/60 border border-white/80 rounded-2xl px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500 font-mono shadow-inner font-bold"
+                  className="w-full bg-white/60 border border-white/80 rounded-xl px-3 py-2 text-xs font-mono font-bold text-slate-900"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-black text-slate-800 mb-1 flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-blue-700" /> Assigned Session Name
-                </label>
+                <label className="block text-xs font-black text-slate-800 mb-1">Assigned Session</label>
                 <input
                   type="text"
-                  placeholder="e.g. Day 1 - Session 1, Day 2 - Session 2"
                   value={editingStudent.session}
                   onChange={e => setEditingStudent({ ...editingStudent, session: e.target.value })}
-                  className="w-full bg-white/60 border border-white/80 rounded-2xl px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500 shadow-inner font-bold"
+                  className="w-full bg-white/60 border border-white/80 rounded-xl px-3 py-2 text-xs font-bold text-slate-900"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-black text-slate-800 mb-1">Form 4 Attendance Status</label>
+                <label className="block text-xs font-black text-slate-800 mb-1">Form 4 Attendance</label>
                 <select
                   value={editingStudent.signedAttendance ? 'signed' : 'unsigned'}
                   onChange={e => setEditingStudent({ ...editingStudent, signedAttendance: e.target.value === 'signed' })}
-                  className="w-full bg-white/60 border border-white/80 rounded-2xl px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500 shadow-inner font-bold"
+                  className="w-full bg-white/60 border border-white/80 rounded-xl px-3 py-2 text-xs font-bold text-slate-900"
                 >
                   <option value="signed">✓ Signed Form 4</option>
                   <option value="unsigned">✕ Unsigned</option>
@@ -1184,7 +1214,7 @@ export default function NCAETracker() {
                 <select
                   value={editingStudent.status}
                   onChange={e => setEditingStudent({ ...editingStudent, status: e.target.value as Student['status'] })}
-                  className="w-full bg-white/60 border border-white/80 rounded-2xl px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500 shadow-inner font-bold"
+                  className="w-full bg-white/60 border border-white/80 rounded-xl px-3 py-2 text-xs font-bold text-slate-900"
                 >
                   <option value="Not Started">Not Started</option>
                   <option value="In Exam">In Exam</option>
@@ -1195,28 +1225,17 @@ export default function NCAETracker() {
                 </select>
               </div>
 
-              <div>
-                <label className="block text-xs font-black text-slate-800 mb-1">Custom Status / Remarks</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Needs re-session, Absent due to LMS error"
-                  value={editingStudent.customStatus || ''}
-                  onChange={e => setEditingStudent({ ...editingStudent, customStatus: e.target.value })}
-                  className="w-full bg-white/60 border border-white/80 rounded-2xl px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500 shadow-inner font-bold"
-                />
-              </div>
-
-              <div className="flex justify-end gap-2 pt-4 border-t border-white/60">
+              <div className="flex justify-end gap-2 pt-3 border-t border-white/60">
                 <button
                   type="button"
                   onClick={() => setEditingStudent(null)}
-                  className="px-4 py-2 bg-white/50 hover:bg-white/80 text-slate-800 rounded-2xl text-xs font-black transition border border-white"
+                  className="px-4 py-2 bg-white/50 text-slate-800 rounded-xl text-xs font-black border border-white"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-xs font-black shadow-lg shadow-blue-500/30 border border-blue-400/50 transition"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-black shadow-md"
                 >
                   Save Changes
                 </button>
