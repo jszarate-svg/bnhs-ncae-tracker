@@ -7,7 +7,7 @@ import {
   Search, Filter, Shield, UserCheck, Edit3, UserX, FileSignature, 
   Sparkles, RefreshCw, Layers, CheckSquare, Square, Wifi, WifiOff,
   GraduationCap, ArrowRight, LogOut, Ban, Calendar, Hash, Sun, Moon, Sunrise,
-  PieChart as PieIcon, BarChart3, Download, Check, Droplets
+  BarChart3, Download, Check
 } from 'lucide-react';
 
 interface Student {
@@ -292,14 +292,12 @@ export default function NCAETracker() {
 
   const greeting = getGreeting();
 
-  // Glassmorphism Shared Styles
   const glassContainerStyle = "bg-white/20 backdrop-blur-3xl border border-white/60 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] rounded-3xl relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/40 before:via-transparent before:to-transparent before:pointer-events-none";
   const glassCardStyle = "bg-white/30 backdrop-blur-3xl border border-white/70 shadow-[0_8px_32px_0_rgba(31,38,135,0.12)] rounded-3xl relative overflow-hidden transition-all duration-300 hover:shadow-[0_12px_40px_0_rgba(31,38,135,0.25)] hover:border-white/90 hover:bg-white/40";
 
   if (!role) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-300/40 via-sky-200/50 via-purple-200/40 to-blue-300/50 text-slate-800 flex flex-col items-center justify-center p-4 font-sans relative overflow-hidden">
-        {/* Animated Refraction Liquid Orbs */}
         <div className="absolute top-10 left-10 w-[500px] h-[500px] bg-gradient-to-tr from-blue-400/40 to-indigo-500/30 rounded-full blur-[100px] animate-pulse pointer-events-none" />
         <div className="absolute bottom-10 right-10 w-[500px] h-[500px] bg-gradient-to-br from-purple-400/40 to-pink-400/30 rounded-full blur-[100px] animate-pulse pointer-events-none" />
 
@@ -386,7 +384,6 @@ export default function NCAETracker() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-200/50 via-sky-100/60 via-purple-100/40 to-blue-200/50 text-slate-800 font-sans p-4 sm:p-6 lg:p-8 relative flex flex-col justify-between overflow-hidden">
       
-      {/* Background Refraction Glows */}
       <div className="fixed top-0 left-1/4 w-[600px] h-[600px] bg-gradient-to-tr from-blue-300/30 to-indigo-400/20 rounded-full blur-[120px] pointer-events-none" />
       <div className="fixed bottom-0 right-1/4 w-[600px] h-[600px] bg-gradient-to-br from-purple-300/30 to-pink-300/20 rounded-full blur-[120px] pointer-events-none" />
 
@@ -522,82 +519,47 @@ export default function NCAETracker() {
             </button>
           </div>
 
-          {/* Section Metrics & Analytics Liquid Glass Cards */}
+          {/* Expanded Full-Width Per-Section Progress Analytics Bar */}
           {showMetrics && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              
-              {/* Section Share */}
-              <div className={`${glassContainerStyle} p-5 space-y-3`}>
-                <div className="flex items-center justify-between border-b border-white/60 pb-3">
-                  <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-2">
-                    <PieIcon className="w-4 h-4 text-blue-700" /> Section Distribution Share
-                  </h3>
-                  <span className="text-[11px] font-mono text-slate-600 font-bold">Total: {totalCount} Students</span>
+            <div className={`${glassContainerStyle} p-5 space-y-4`}>
+              <div className="flex items-center justify-between border-b border-white/60 pb-3">
+                <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-2">
+                  <BarChart3 className="w-4 h-4 text-emerald-700" /> Per-Section Exam Completion Progress
+                </h3>
+                <span className="text-[11px] font-mono text-emerald-700 font-black">Live Sync</span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-1">
+                <div>
+                  <div className="flex justify-between text-xs font-black mb-1.5">
+                    <span className="text-slate-800">Thorndike ({thorndikeCompleted}/{thorndikeCount} Completed)</span>
+                    <span className="text-blue-700">{Math.round((thorndikeCompleted / thorndikeCount) * 100)}%</span>
+                  </div>
+                  <div className="w-full bg-white/40 border border-white/60 rounded-full h-3.5 overflow-hidden p-0.5 shadow-inner">
+                    <div className="bg-blue-600 h-2.5 rounded-full transition-all duration-500 shadow-sm" style={{ width: `${(thorndikeCompleted / thorndikeCount) * 100}%` }}></div>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3 text-center pt-1">
-                  <div className="bg-white/30 backdrop-blur-3xl border border-white/70 p-3 rounded-2xl shadow-inner">
-                    <p className="text-[11px] font-black text-blue-800 uppercase">Thorndike</p>
-                    <p className="text-2xl font-black text-blue-950 mt-0.5">{thorndikeCount}</p>
-                    <p className="text-[10px] font-black text-blue-600 mt-0.5">{Math.round((thorndikeCount / totalCount) * 100)}% of Total</p>
+                <div>
+                  <div className="flex justify-between text-xs font-black mb-1.5">
+                    <span className="text-slate-800">Gardner ({gardnerCompleted}/{gardnerCount} Completed)</span>
+                    <span className="text-emerald-700">{Math.round((gardnerCompleted / gardnerCount) * 100)}%</span>
                   </div>
-
-                  <div className="bg-white/30 backdrop-blur-3xl border border-white/70 p-3 rounded-2xl shadow-inner">
-                    <p className="text-[11px] font-black text-emerald-800 uppercase">Gardner</p>
-                    <p className="text-2xl font-black text-emerald-950 mt-0.5">{gardnerCount}</p>
-                    <p className="text-[10px] font-black text-emerald-600 mt-0.5">{Math.round((gardnerCount / totalCount) * 100)}% of Total</p>
+                  <div className="w-full bg-white/40 border border-white/60 rounded-full h-3.5 overflow-hidden p-0.5 shadow-inner">
+                    <div className="bg-emerald-600 h-2.5 rounded-full transition-all duration-500 shadow-sm" style={{ width: `${(gardnerCompleted / gardnerCount) * 100}%` }}></div>
                   </div>
+                </div>
 
-                  <div className="bg-white/30 backdrop-blur-3xl border border-white/70 p-3 rounded-2xl shadow-inner">
-                    <p className="text-[11px] font-black text-purple-800 uppercase">Dewey</p>
-                    <p className="text-2xl font-black text-purple-950 mt-0.5">{deweyCount}</p>
-                    <p className="text-[10px] font-black text-purple-600 mt-0.5">{Math.round((deweyCount / totalCount) * 100)}% of Total</p>
+                <div>
+                  <div className="flex justify-between text-xs font-black mb-1.5">
+                    <span className="text-slate-800">Dewey ({deweyCompleted}/{deweyCount} Completed)</span>
+                    <span className="text-purple-700">{Math.round((deweyCompleted / deweyCount) * 100)}%</span>
+                  </div>
+                  <div className="w-full bg-white/40 border border-white/60 rounded-full h-3.5 overflow-hidden p-0.5 shadow-inner">
+                    <div className="bg-purple-600 h-2.5 rounded-full transition-all duration-500 shadow-sm" style={{ width: `${(deweyCompleted / deweyCount) * 100}%` }}></div>
                   </div>
                 </div>
               </div>
-
-              {/* Progress Bar Chart */}
-              <div className={`${glassContainerStyle} p-5 space-y-3`}>
-                <div className="flex items-center justify-between border-b border-white/60 pb-3">
-                  <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-2">
-                    <BarChart3 className="w-4 h-4 text-emerald-700" /> Per-Section Exam Progress Bar
-                  </h3>
-                  <span className="text-[11px] font-mono text-emerald-700 font-black">Live Sync</span>
-                </div>
-
-                <div className="space-y-3 pt-1">
-                  <div>
-                    <div className="flex justify-between text-xs font-black mb-1">
-                      <span className="text-slate-800">Thorndike ({thorndikeCompleted}/{thorndikeCount} Completed)</span>
-                      <span className="text-blue-700">{Math.round((thorndikeCompleted / thorndikeCount) * 100)}%</span>
-                    </div>
-                    <div className="w-full bg-white/40 border border-white/60 rounded-full h-3 overflow-hidden p-0.5 shadow-inner">
-                      <div className="bg-blue-600 h-2 rounded-full transition-all duration-500 shadow-sm" style={{ width: `${(thorndikeCompleted / thorndikeCount) * 100}%` }}></div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-xs font-black mb-1">
-                      <span className="text-slate-800">Gardner ({gardnerCompleted}/{gardnerCount} Completed)</span>
-                      <span className="text-emerald-700">{Math.round((gardnerCompleted / gardnerCount) * 100)}%</span>
-                    </div>
-                    <div className="w-full bg-white/40 border border-white/60 rounded-full h-3 overflow-hidden p-0.5 shadow-inner">
-                      <div className="bg-emerald-600 h-2 rounded-full transition-all duration-500 shadow-sm" style={{ width: `${(gardnerCompleted / gardnerCount) * 100}%` }}></div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-xs font-black mb-1">
-                      <span className="text-slate-800">Dewey ({deweyCompleted}/{deweyCount} Completed)</span>
-                      <span className="text-purple-700">{Math.round((deweyCompleted / deweyCount) * 100)}%</span>
-                    </div>
-                    <div className="w-full bg-white/40 border border-white/60 rounded-full h-3 overflow-hidden p-0.5 shadow-inner">
-                      <div className="bg-purple-600 h-2 rounded-full transition-all duration-500 shadow-sm" style={{ width: `${(deweyCompleted / deweyCount) * 100}%` }}></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
             </div>
           )}
 
@@ -700,7 +662,6 @@ export default function NCAETracker() {
                           </span>
                         </td>
 
-                        {/* Direct Hover & Click Inline Session Editing */}
                         <td className="py-4 px-5 text-slate-700 text-xs">
                           {role === 'proctor' && student.isEligible ? (
                             <div 
