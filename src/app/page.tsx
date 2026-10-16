@@ -176,11 +176,11 @@ export default function NCAETracker() {
     if (!currentTime) return { text: 'Good day, Teacher!', icon: <Sun className="w-4 h-4 text-amber-500" /> };
     const hour = currentTime.getHours();
     if (hour < 12) {
-      return { text: 'Good morning, Teacher!', icon: <Sunrise className="w-4 h-4 text-amber-500" /> };
+      return { text: 'Good morning!', icon: <Sunrise className="w-4 h-4 text-amber-500" /> };
     } else if (hour < 18) {
-      return { text: 'Good afternoon, Teacher!', icon: <Sun className="w-4 h-4 text-amber-500" /> };
+      return { text: 'Good afternoon!', icon: <Sun className="w-4 h-4 text-amber-500" /> };
     } else {
-      return { text: 'Good evening, Teacher!', icon: <Moon className="w-4 h-4 text-indigo-500" /> };
+      return { text: 'Good evening!', icon: <Moon className="w-4 h-4 text-indigo-500" /> };
     }
   };
 
@@ -397,7 +397,7 @@ export default function NCAETracker() {
               NCAE 2026 Portal
             </h1>
             <p className="text-slate-700 text-sm sm:text-base max-w-md mx-auto font-medium leading-relaxed pt-1">
-              Real-time Examination Pull-Out & Attendance System
+              Real-Time Examination Pull-Out & Session Directory
             </p>
           </div>
 
@@ -415,7 +415,7 @@ export default function NCAETracker() {
                   Proctor Mode (PIN Locked)
                 </h3>
                 <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                  Requires PIN to access proctor tools, edit schedules, manage Form 4 attendance, and open the interactive seating map.
+                  PIN-protected mode to manage schedules, mark Form 4 attendance, and assign laptop seating.
                 </p>
               </div>
               <div className="flex items-center text-xs font-black text-blue-700 group-hover:translate-x-1 transition-transform">
@@ -425,21 +425,21 @@ export default function NCAETracker() {
 
             <button
               onClick={() => setRole('adviser')}
-              className={`${glassCardStyle} p-6 flex flex-col justify-between space-y-6 hover:-translate-y-1.5 group`}
+              className={`${glassCardStyle} p-6 flex flex-col justify-between space-y-6 hover:-translate-y-1.5 group border-2 border-emerald-400/40`}
             >
               <div className="space-y-4">
                 <div className="p-3.5 bg-emerald-500/20 text-emerald-800 rounded-2xl w-fit border border-white/80 shadow-inner">
                   <UserCheck className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-black text-slate-900 group-hover:text-emerald-700 transition-colors">
-                  Adviser Mode
+                  Advisers / Students Mode
                 </h3>
                 <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                  Public read-only view for section advisers with section tabs & section analytics charts.
+                  Public read-only lookup directory. Filter by Section (Thorndike, Gardner, Dewey) to check your assigned session and status.
                 </p>
               </div>
               <div className="flex items-center text-xs font-black text-emerald-700 group-hover:translate-x-1 transition-transform">
-                Enter as Adviser <ArrowRight className="w-4 h-4 ml-1" />
+                Enter Directory <ArrowRight className="w-4 h-4 ml-1" />
               </div>
             </button>
           </div>
@@ -527,7 +527,7 @@ export default function NCAETracker() {
                   Bagonbon NHS — NCAE 2026 Portal
                 </h1>
                 <p className="text-slate-600 text-xs sm:text-sm mt-0.5 font-bold flex items-center gap-1.5">
-                  <Laptop className="w-4 h-4 text-blue-700" /> 15 Laptop Cap • Real-time Exam Tracking
+                  <Laptop className="w-4 h-4 text-blue-700" /> 15 Laptop Cap • Student & Adviser Pull-Out Schedule
                 </p>
               </div>
             </div>
@@ -552,20 +552,22 @@ export default function NCAETracker() {
               {showMetrics ? 'Hide Analytics' : 'Analytics'}
             </button>
 
-            <button
-              onClick={exportCSV}
-              className="flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xs font-black shadow-lg shadow-emerald-600/20 border border-emerald-400/50 transition"
-            >
-              <Download className="w-4 h-4" />
-              Export
-            </button>
+            {role === 'proctor' && (
+              <button
+                onClick={exportCSV}
+                className="flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xs font-black shadow-lg shadow-emerald-600/20 border border-emerald-400/50 transition"
+              >
+                <Download className="w-4 h-4" />
+                Export
+              </button>
+            )}
 
             <div className="flex items-center bg-white/30 backdrop-blur-3xl border border-white/80 p-1 rounded-2xl shadow-sm">
               <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black ${
                 role === 'proctor' ? 'bg-blue-600 text-white shadow-md' : 'bg-emerald-600 text-white shadow-md'
               }`}>
                 {role === 'proctor' ? <Shield className="w-3.5 h-3.5" /> : <UserCheck className="w-3.5 h-3.5" />}
-                {role === 'proctor' ? 'Proctor' : 'Adviser'}
+                {role === 'proctor' ? 'Proctor' : 'Advisers / Students'}
               </span>
               <button
                 onClick={() => setRole(null)}
@@ -601,7 +603,7 @@ export default function NCAETracker() {
             </div>
           </div>
 
-          {/* INTERACTIVE 4-ROW SEATING MAP — EXCLUSIVELY FOR PROCTOR MODE */}
+          {/* INTERACTIVE SEATING MAP — RESTRICTED TO PROCTOR MODE */}
           {role === 'proctor' && showSeatingMap && (
             <div className={`${glassContainerStyle} p-4 sm:p-6 space-y-4 border-2 border-indigo-300/60 shadow-2xl`}>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/60 pb-3">
@@ -628,7 +630,6 @@ export default function NCAETracker() {
                 </div>
               </div>
 
-              {/* 4 ROWS DISPLAY */}
               <div className="space-y-4 pt-1">
                 {rowsConfig.map(row => (
                   <div key={row.rowNum} className="bg-white/30 backdrop-blur-2xl border border-white/80 rounded-2xl p-3 shadow-md space-y-2">
@@ -803,7 +804,7 @@ export default function NCAETracker() {
                 <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
                 <input
                   type="text"
-                  placeholder="Search name or LRN..."
+                  placeholder="Search your name or LRN..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   className="w-full bg-white/50 border border-white/80 rounded-2xl pl-10 pr-4 py-2 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-blue-500 shadow-inner font-bold"
@@ -1044,8 +1045,8 @@ export default function NCAETracker() {
         JUDIMER ZARATE — BAGONBON NHS NCAE 2026 PORTAL
       </footer>
 
-      {/* SEAT / LAPTOP ASSIGNMENT MODAL */}
-      {selectedSeatModal && (
+      {/* SEAT / LAPTOP ASSIGNMENT MODAL (PROCTOR ONLY) */}
+      {selectedSeatModal && role === 'proctor' && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-2xl flex items-center justify-center p-4 z-50">
           <div className="bg-white/30 backdrop-blur-3xl border border-white/80 rounded-3xl max-w-md w-full p-6 shadow-[0_24px_48px_0_rgba(0,0,0,0.3)] space-y-4">
             <div className="flex items-center justify-between border-b border-white/60 pb-3">
@@ -1117,7 +1118,7 @@ export default function NCAETracker() {
         </div>
       )}
 
-      {editingStudent && (
+      {editingStudent && role === 'proctor' && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-2xl flex items-center justify-center p-4 z-50">
           <div className="bg-white/30 backdrop-blur-3xl border border-white/80 rounded-3xl max-w-md w-full p-6 shadow-[0_24px_48px_0_rgba(0,0,0,0.3)] space-y-4">
             <div>
