@@ -7,7 +7,7 @@ import {
   Search, Filter, Shield, UserCheck, Edit3, UserX, FileSignature, 
   Sparkles, RefreshCw, Layers, CheckSquare, Square, Wifi, WifiOff,
   GraduationCap, ArrowRight, LogOut, Ban, Calendar, Hash, Sun, Moon, Sunrise,
-  BarChart3, Download, Check
+  BarChart3, Download, Check, User
 } from 'lucide-react';
 
 interface Student {
@@ -23,110 +23,131 @@ interface Student {
   isEligible: boolean;
 }
 
-const INITIAL_STUDENTS: Student[] = [
-  // 10 - THORNDIKE (34 Total Students)
-  { id: 'th-1', lrn: '117792150055', name: 'ALISNA, JULIET, CALAPUAN', section: 'Thorndike', gender: 'F', session: 'Session 1', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-2', lrn: '117792160061', name: 'ARIOSTE, SHAJARA, CABURNAY', section: 'Thorndike', gender: 'F', session: 'Session 1', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-3', lrn: '117792160043', name: 'BARCOMA, JASCENT CLEAR, ISOGAN', section: 'Thorndike', gender: 'F', session: 'Session 1', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-4', lrn: '117797160026', name: 'BAYOG-ANG, JAY MARK, SARNO', section: 'Thorndike', gender: 'M', session: 'Session 1', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-5', lrn: '117792160029', name: 'BOLIBOLI, JOVESEIL, OLBEDENCIA', section: 'Thorndike', gender: 'M', session: 'Session 1', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-6', lrn: '117792160078', name: 'BRADY, JAMAICA, -', section: 'Thorndike', gender: 'F', session: 'Session 1', status: 'Not Started', signedAttendance: false, isEligible: true },
+// Function to auto-assign sessions: 15 students per session per section
+const autoAssignSession = (indexInSection: number, isEligible: boolean): string => {
+  if (!isEligible) return 'Non-Pullout';
+  if (indexInSection < 15) return 'Session 1';
+  if (indexInSection < 30) return 'Session 2';
+  return 'Session 3';
+};
 
-  { id: 'th-7', lrn: '117797160002', name: 'CANONOY, ROGELIO JR, ANDRAQUE', section: 'Thorndike', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-8', lrn: '117792160045', name: 'DAYONDON, JIMESRYL, PILAPIL', section: 'Thorndike', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-9', lrn: '117797140029', name: 'DEL ROSARIO, VIRGILLIO JR, MAG-ASO', section: 'Thorndike', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-10', lrn: '117797160024', name: 'DELUBIO, SHERLYN, DELIMA', section: 'Thorndike', gender: 'F', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-11', lrn: '117796140020', name: 'ESPLAGUERA, JENNYL, VERBO', section: 'Thorndike', gender: 'F', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-12', lrn: '116093160022', name: 'GABIA, CHRISSAN, ARBOLEDA', section: 'Thorndike', gender: 'F', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-13', lrn: '117792150055', name: 'GALLARDO, MARIAN, RAFAEL', section: 'Thorndike', gender: 'F', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-14', lrn: '117792160012', name: 'GALLARDO, NELBELENE, ASEGURADO', section: 'Thorndike', gender: 'F', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-15', lrn: '117792160033', name: 'GONZAGA, JOSH ANDREE, TAPDASAN', section: 'Thorndike', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-16', lrn: '117792160034', name: 'HILIGAN, JHON PAOLO, JUANITO', section: 'Thorndike', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-17', lrn: '117797160005', name: 'JERANDOY, JOVENOEL, DENEROS', section: 'Thorndike', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-18', lrn: '117792160067', name: 'LARIOSA, RINELEN, BARANGGAN', section: 'Thorndike', gender: 'F', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-19', lrn: '117792160082', name: 'LEMORAN, JHOVY MAR, EWICAN', section: 'Thorndike', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-20', lrn: '117792160023', name: 'MAHUSAY, JAMES, PASI', section: 'Thorndike', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-21', lrn: '117792150073', name: 'MANDALONES, AYENA, - (NLS)', section: 'Thorndike', gender: 'F', session: 'Non-Pullout', status: 'Ineligible', customStatus: 'Non-Learner / Ineligible', signedAttendance: false, isEligible: false },
-  { id: 'th-22', lrn: '117792160069', name: 'MELLAS, ZYRIEL ANN, COGONON', section: 'Thorndike', gender: 'F', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
+const RAW_STUDENTS_DATA: Array<Omit<Student, 'session'>> = [
+  // 10 - THORNDIKE (34 Total)
+  { id: 'th-1', lrn: '117792150055', name: 'ALISNA, JULIET, CALAPUAN', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-2', lrn: '117792160061', name: 'ARIOSTE, SHAJARA, CABURNAY', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-3', lrn: '117792160043', name: 'BARCOMA, JASCENT CLEAR, ISOGAN', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-4', lrn: '117797160026', name: 'BAYOG-ANG, JAY MARK, SARNO', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-5', lrn: '117792160029', name: 'BOLIBOLI, JOVESEIL, OLBEDENCIA', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-6', lrn: '117792160078', name: 'BRADY, JAMAICA, -', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-7', lrn: '117797160002', name: 'CANONOY, ROGELIO JR, ANDRAQUE', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-8', lrn: '117792160045', name: 'DAYONDON, JIMESRYL, PILAPIL', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-9', lrn: '117797140029', name: 'DEL ROSARIO, VIRGILLIO JR, MAG-ASO', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-10', lrn: '117797160024', name: 'DELUBIO, SHERLYN, DELIMA', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-11', lrn: '117796140020', name: 'ESPLAGUERA, JENNYL, VERBO', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-12', lrn: '116093160022', name: 'GABIA, CHRISSAN, ARBOLEDA', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-13', lrn: '117792150055', name: 'GALLARDO, MARIAN, RAFAEL', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-14', lrn: '117792160012', name: 'GALLARDO, NELBELENE, ASEGURADO', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-15', lrn: '117792160033', name: 'GONZAGA, JOSH ANDREE, TAPDASAN', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
 
-  { id: 'th-23', lrn: '117797160016', name: 'NAVAJA, ANGELICA, PACALDO', section: 'Thorndike', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-24', lrn: '117792160014', name: 'NAVARRO, JELYN MAE, MAQUISA', section: 'Thorndike', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-25', lrn: '117792160015', name: 'NAVARRO, JOVEMAR, JR DESTACAMENTO', section: 'Thorndike', gender: 'M', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-26', lrn: '117792160085', name: 'ORDONIO, RICHMER, CABALLERO', section: 'Thorndike', gender: 'M', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-27', lrn: '117792160053', name: 'PILAPIL, JECKNEY, MOSQUIDA', section: 'Thorndike', gender: 'M', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-28', lrn: '117792160054', name: 'PILAPIL, LEONARD, PASULOT', section: 'Thorndike', gender: 'M', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-29', lrn: '117792160071', name: 'SABERON, JAHAZIEL, JUANILLO', section: 'Thorndike', gender: 'M', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-30', lrn: '117797150018', name: 'SARNO, ROVEC, OLIVERIO', section: 'Thorndike', gender: 'M', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-31', lrn: '126529140010', name: 'VILLAHERMOSA, JOMAR, CARUSCAY', section: 'Thorndike', gender: 'M', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-32', lrn: '128387160003', name: 'VILLAJOS, LEA MAE, CABALLERO', section: 'Thorndike', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-33', lrn: '117792160040', name: 'VILLAREAL, JONA GRACE, GEQUE', section: 'Thorndike', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'th-34', lrn: '117796170021', name: 'VILLARMENTE, JOE, TANQUE', section: 'Thorndike', gender: 'M', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-16', lrn: '117792160034', name: 'HILIGAN, JHON PAOLO, JUANITO', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-17', lrn: '117797160005', name: 'JERANDOY, JOVENOEL, DENEROS', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-18', lrn: '117792160067', name: 'LARIOSA, RINELEN, BARANGGAN', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-19', lrn: '117792160082', name: 'LEMORAN, JHOVY MAR, EWICAN', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-20', lrn: '117792160023', name: 'MAHUSAY, JAMES, PASI', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-21', lrn: '117792150073', name: 'MANDALONES, AYENA, - (NLS)', section: 'Thorndike', gender: 'F', status: 'Ineligible', customStatus: 'Non-Learner / Ineligible', signedAttendance: false, isEligible: false },
+  { id: 'th-22', lrn: '117792160069', name: 'MELLAS, ZYRIEL ANN, COGONON', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-23', lrn: '117797160016', name: 'NAVAJA, ANGELICA, PACALDO', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-24', lrn: '117792160014', name: 'NAVARRO, JELYN MAE, MAQUISA', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-25', lrn: '117792160015', name: 'NAVARRO, JOVEMAR, JR DESTACAMENTO', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-26', lrn: '117792160085', name: 'ORDONIO, RICHMER, CABALLERO', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-27', lrn: '117792160053', name: 'PILAPIL, JECKNEY, MOSQUIDA', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-28', lrn: '117792160054', name: 'PILAPIL, LEONARD, PASULOT', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-29', lrn: '117792160071', name: 'SABERON, JAHAZIEL, JUANILLO', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-30', lrn: '117797150018', name: 'SARNO, ROVEC, OLIVERIO', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
 
-  // 10 - GARDNER (29 Total Students)
-  { id: 'ga-1', lrn: '117792160003', name: 'BALOSA, MARK JHON L.', section: 'Gardner', gender: 'M', session: 'Session 1', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-2', lrn: '117792160056', name: 'BARING, RUSSEL E.', section: 'Gardner', gender: 'M', session: 'Session 1', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-3', lrn: '117792160030', name: 'CABULONG, EJAY O.', section: 'Gardner', gender: 'M', session: 'Session 1', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-4', lrn: '116909160007', name: 'ALDE, QUEENCIEVELLE R.', section: 'Gardner', gender: 'F', session: 'Session 1', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-5', lrn: '117798160010', name: 'ALESNA, JUDY ANN O.', section: 'Gardner', gender: 'F', session: 'Session 1', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-6', lrn: '117792160005', name: 'BRADE, JESSA MAE D.', section: 'Gardner', gender: 'F', session: 'Session 1', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-7', lrn: '117792160082', name: 'BARCOMA, REYBEN', section: 'Gardner', gender: 'M', session: 'Session 1', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-31', lrn: '126529140010', name: 'VILLAHERMOSA, JOMAR, CARUSCAY', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-32', lrn: '128387160003', name: 'VILLAJOS, LEA MAE, CABALLERO', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-33', lrn: '117792160040', name: 'VILLAREAL, JONA GRACE, GEQUE', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'th-34', lrn: '117796170021', name: 'VILLARMENTE, JOE, TANQUE', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
 
-  { id: 'ga-8', lrn: '117792170098', name: 'DOLOR, COBBY BRYAN C.', section: 'Gardner', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-9', lrn: '117792160022', name: 'DOMINGGO, PAOLO E.', section: 'Gardner', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-10', lrn: '117792160048', name: 'GONZAGA, JOSH LYCER', section: 'Gardner', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-11', lrn: '117796160011', name: 'GORDO, FRANCIS C.', section: 'Gardner', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-12', lrn: '116908160003', name: 'HULLEZA, EDRIAN S.', section: 'Gardner', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-13', lrn: '117792160036', name: 'LEMORAN, JOCELLE MARL E.', section: 'Gardner', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-14', lrn: '117792170099', name: 'LASCONIA, RODEL D.', section: 'Gardner', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-15', lrn: '117798170026', name: 'LINGANAY, GINO D.', section: 'Gardner', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-16', lrn: '117796160013', name: 'RUBIO, JOHN ANDREW R.', section: 'Gardner', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-17', lrn: '117792160059', name: 'SABERON, JAPET R.', section: 'Gardner', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-18', lrn: '117797160007', name: 'TELEBRICO, KEVEN I.', section: 'Gardner', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-19', lrn: '117797160008', name: 'VELASCO, KIM ASHLEY D.', section: 'Gardner', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-20', lrn: '117796160007', name: 'CALAPUAN, AILEEN L.', section: 'Gardner', gender: 'F', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-21', lrn: '117792160011', name: 'ENGGANA, JESSAMAE B.', section: 'Gardner', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-22', lrn: '117326150039', name: 'ENGGANA, WELMIROSE A.', section: 'Gardner', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-23', lrn: '116909160030', name: 'ESCOSAR, JELLY', section: 'Gardner', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-24', lrn: '116908160010', name: 'GABIA, MARIA CRISTY L.', section: 'Gardner', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-25', lrn: '117792170112', name: 'GERALDEZ, CRISTEPHIN JOY C.', section: 'Gardner', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-26', lrn: '117792160035', name: 'JUANITO, MARY ANN H.', section: 'Gardner', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-27', lrn: '117792150072', name: 'MAGBANUA, PRINCESS MABEY P.', section: 'Gardner', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-28', lrn: '117792160070', name: 'PARAN, JERAMAE A.', section: 'Gardner', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-29', lrn: '117792160018', name: 'SUMANTING, ZYAN BELLE D.', section: 'Gardner', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'ga-30', lrn: '117797160025', name: 'SOLANO, MARJELYN L.', section: 'Gardner', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
+  // 10 - GARDNER (29 Total)
+  { id: 'ga-1', lrn: '117792160003', name: 'BALOSA, MARK JHON L.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-2', lrn: '117792160056', name: 'BARING, RUSSEL E.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-3', lrn: '117792160030', name: 'CABULONG, EJAY O.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-4', lrn: '116909160007', name: 'ALDE, QUEENCIEVELLE R.', section: 'Gardner', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-5', lrn: '117798160010', name: 'ALESNA, JUDY ANN O.', section: 'Gardner', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-6', lrn: '117792160005', name: 'BRADE, JESSA MAE D.', section: 'Gardner', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-7', lrn: '117792160082', name: 'BARCOMA, REYBEN', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-8', lrn: '117792170098', name: 'DOLOR, COBBY BRYAN C.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-9', lrn: '117792160022', name: 'DOMINGGO, PAOLO E.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-10', lrn: '117792160048', name: 'GONZAGA, JOSH LYCER', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-11', lrn: '117796160011', name: 'GORDO, FRANCIS C.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-12', lrn: '116908160003', name: 'HULLEZA, EDRIAN S.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-13', lrn: '117792160036', name: 'LEMORAN, JOCELLE MARL E.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-14', lrn: '117792170099', name: 'LASCONIA, RODEL D.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-15', lrn: '117798170026', name: 'LINGANAY, GINO D.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
 
-  // 10 - DEWEY (30 Total Students)
-  { id: 'de-1', lrn: '107921150317', name: 'ABUEME, MA. ANGELICA, PILAPIL', section: 'Dewey', gender: 'F', session: 'Session 1', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-2', lrn: '116909160013', name: 'ALBIAR, DENNISE JEAN, PURISIMA', section: 'Dewey', gender: 'F', session: 'Session 1', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-3', lrn: '117797170034', name: 'ALESNA, ANGEL, CAMPANIA', section: 'Dewey', gender: 'F', session: 'Session 1', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-4', lrn: '117792160002', name: 'ALIGATO, JANELLE, RIVERA', section: 'Dewey', gender: 'F', session: 'Session 1', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-5', lrn: '117792160027', name: 'ALORA, CRISTEL, SATINGASIN', section: 'Dewey', gender: 'F', session: 'Session 1', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-6', lrn: '117792160055', name: 'ARELLANO, JESSICA, PACALDO', section: 'Dewey', gender: 'F', session: 'Session 1', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-7', lrn: '117792160062', name: 'BARBADILLO, CHERE, BAROY', section: 'Dewey', gender: 'F', session: 'Session 1', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-16', lrn: '117796160013', name: 'RUBIO, JOHN ANDREW R.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-17', lrn: '117792160059', name: 'SABERON, JAPET R.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-18', lrn: '117797160007', name: 'TELEBRICO, KEVEN I.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-19', lrn: '117797160008', name: 'VELASCO, KIM ASHLEY D.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-20', lrn: '117796160007', name: 'CALAPUAN, AILEEN L.', section: 'Gardner', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-21', lrn: '117792160011', name: 'ENGGANA, JESSAMAE B.', section: 'Gardner', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-22', lrn: '117326150039', name: 'ENGGANA, WELMIROSE A.', section: 'Gardner', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-23', lrn: '116909160030', name: 'ESCOSAR, JELLY', section: 'Gardner', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-24', lrn: '116908160010', name: 'GABIA, MARIA CRISTY L.', section: 'Gardner', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-25', lrn: '117792170112', name: 'GERALDEZ, CRISTEPHIN JOY C.', section: 'Gardner', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-26', lrn: '117792160035', name: 'JUANITO, MARY ANN H.', section: 'Gardner', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-27', lrn: '117792150072', name: 'MAGBANUA, PRINCESS MABEY P.', section: 'Gardner', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-28', lrn: '117792160070', name: 'PARAN, JERAMAE A.', section: 'Gardner', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'ga-29', lrn: '117792160018', name: 'SUMANTING, ZYAN BELLE D.', section: 'Gardner', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
 
-  { id: 'de-8', lrn: '117792160008', name: 'CONTENIDO, KYL PATRICK, CEJAS', section: 'Dewey', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-9', lrn: '117792160032', name: 'CUIZON, GIAN KLENT, -', section: 'Dewey', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-10', lrn: '117797160006', name: 'JUANILLO, JHON ROEY, CABALLERO', section: 'Dewey', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-11', lrn: '117792160052', name: 'PESODAS, MARK ANTHONY, ARELLANO', section: 'Dewey', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-12', lrn: '120755160018', name: 'RIM, DAVRYL JAMES, LESONDRA', section: 'Dewey', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-13', lrn: '117796160012', name: 'TAPIC, JHONREY, ESCOREL', section: 'Dewey', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-14', lrn: '117797160023', name: 'VILLANUEVA, DHEAN JR, CARAMIHAN', section: 'Dewey', gender: 'M', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-15', lrn: '117792160007', name: 'CALOG, MELCHIE, JUANILLO', section: 'Dewey', gender: 'F', session: 'Session 2', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-16', lrn: '117797170044', name: 'CARAMIHAN, PRECIEL JANE, DAYOHA', section: 'Dewey', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-17', lrn: '117792160031', name: 'COMPACION, PATRICE MAXXIMA, JUMAGDAO', section: 'Dewey', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-18', lrn: '117792150059', name: 'GERANDOY, KHEM, PILAPIL', section: 'Dewey', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-19', lrn: '117792160013', name: 'HERNAN, BEA MAY, YANQUIN', section: 'Dewey', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-20', lrn: '117797160017', name: 'INSIK, STELLA MARRIEZ, REMUNDA', section: 'Dewey', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-21', lrn: '116904160038', name: 'LESONDRA, MENIROSE, ALLERA', section: 'Dewey', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-22', lrn: '117792170120', name: 'LOSARITA, LAICA, LARITA', section: 'Dewey', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-23', lrn: '117797160013', name: 'MIRANDA, GEREMEH, FABELLAR', section: 'Dewey', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-24', lrn: '116904170054', name: 'PAZ, CRISTAL MAE, ESOLA', section: 'Dewey', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-25', lrn: '117797160014', name: 'PELESORES, DANICA, VILLARDE', section: 'Dewey', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-26', lrn: '117792160017', name: 'RICABORDA, PRENCISS DEVINE, APURADO', section: 'Dewey', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-27', lrn: '117798140083', name: 'ROSIANA, ANALIZA, DESTACAMENTO', section: 'Dewey', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-28', lrn: '117341160013', name: 'RUIZ, KIM, LUMANGYAO', section: 'Dewey', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
-  { id: 'de-29', lrn: '117796170001', name: 'SOHOT, ROSEMARIE, TANIA', section: 'Dewey', gender: 'F', session: 'Session 3', status: 'Not Started', signedAttendance: false, isEligible: true },
+  // 10 - DEWEY (29 Total)
+  { id: 'de-1', lrn: '107921150317', name: 'ABUEME, MA. ANGELICA, PILAPIL', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-2', lrn: '116909160013', name: 'ALBIAR, DENNISE JEAN, PURISIMA', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-3', lrn: '117797170034', name: 'ALESNA, ANGEL, CAMPANIA', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-4', lrn: '117792160002', name: 'ALIGATO, JANELLE, RIVERA', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-5', lrn: '117792160027', name: 'ALORA, CRISTEL, SATINGASIN', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-6', lrn: '117792160055', name: 'ARELLANO, JESSICA, PACALDO', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-7', lrn: '117792160062', name: 'BARBADILLO, CHERE, BAROY', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-8', lrn: '117792160008', name: 'CONTENIDO, KYL PATRICK, CEJAS', section: 'Dewey', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-9', lrn: '117792160032', name: 'CUIZON, GIAN KLENT, -', section: 'Dewey', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-10', lrn: '117797160006', name: 'JUANILLO, JHON ROEY, CABALLERO', section: 'Dewey', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-11', lrn: '117792160052', name: 'PESODAS, MARK ANTHONY, ARELLANO', section: 'Dewey', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-12', lrn: '120755160018', name: 'RIM, DAVRYL JAMES, LESONDRA', section: 'Dewey', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-13', lrn: '117796160012', name: 'TAPIC, JHONREY, ESCOREL', section: 'Dewey', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-14', lrn: '117797160023', name: 'VILLANUEVA, DHEAN JR, CARAMIHAN', section: 'Dewey', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-15', lrn: '117792160007', name: 'CALOG, MELCHIE, JUANILLO', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+
+  { id: 'de-16', lrn: '117797170044', name: 'CARAMIHAN, PRECIEL JANE, DAYOHA', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-17', lrn: '117792160031', name: 'COMPACION, PATRICE MAXXIMA, JUMAGDAO', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-18', lrn: '117792150059', name: 'GERANDOY, KHEM, PILAPIL', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-19', lrn: '117792160013', name: 'HERNAN, BEA MAY, YANQUIN', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-20', lrn: '117797160017', name: 'INSIK, STELLA MARRIEZ, REMUNDA', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-21', lrn: '116904160038', name: 'LESONDRA, MENIROSE, ALLERA', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-22', lrn: '117792170120', name: 'LOSARITA, LAICA, LARITA', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-23', lrn: '117797160013', name: 'MIRANDA, GEREMEH, FABELLAR', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-24', lrn: '116904170054', name: 'PAZ, CRISTAL MAE, ESOLA', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-25', lrn: '117797160014', name: 'PELESORES, DANICA, VILLARDE', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-26', lrn: '117792160017', name: 'RICABORDA, PRENCISS DEVINE, APURADO', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-27', lrn: '117798140083', name: 'ROSIANA, ANALIZA, DESTACAMENTO', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-28', lrn: '117341160013', name: 'RUIZ, KIM, LUMANGYAO', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
+  { id: 'de-29', lrn: '117796170001', name: 'SOHOT, ROSEMARIE, TANIA', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
 ];
+
+// Pre-assign sessions (15 per session per section)
+const sectionCounters: { [key: string]: number } = { Thorndike: 0, Gardner: 0, Dewey: 0 };
+
+const INITIAL_STUDENTS: Student[] = RAW_STUDENTS_DATA.map(st => {
+  const currentIndex = sectionCounters[st.section];
+  if (st.isEligible) {
+    sectionCounters[st.section] += 1;
+  }
+  return {
+    ...st,
+    session: autoAssignSession(currentIndex, st.isEligible)
+  };
+});
 
 export default function NCAETracker() {
   const [role, setRole] = useState<'proctor' | 'adviser' | null>(null);
@@ -218,7 +239,8 @@ export default function NCAETracker() {
     if (!editingStudent) return;
 
     await supabase.from('students').update({
-      lrn: editingStudent.lrn,
+      name: editingStudent.name.trim(),
+      lrn: editingStudent.lrn.trim(),
       session: editingStudent.session.trim() || 'Session 1',
       status: editingStudent.status,
       customStatus: editingStudent.customStatus || ''
@@ -228,7 +250,7 @@ export default function NCAETracker() {
   };
 
   const handleForceReset = async () => {
-    if (confirm('Force reset database to initial 93 students with cleared statuses?')) {
+    if (confirm('Force reset database to initial 92 students with auto-balanced 15-student sessions?')) {
       await supabase.from('students').delete().neq('id', '0');
       await supabase.from('students').insert(INITIAL_STUDENTS);
       setStudents(INITIAL_STUDENTS);
@@ -339,7 +361,7 @@ export default function NCAETracker() {
                   Proctor Mode
                 </h3>
                 <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                  Full access to edit LRNs, assigned sessions inline, exam statuses, and toggle attendance signatures.
+                  Full access to edit student names, LRNs, assigned sessions inline, exam statuses, and toggle attendance signatures.
                 </p>
               </div>
               <div className="flex items-center text-xs font-black text-blue-700 group-hover:translate-x-1 transition-transform">
@@ -524,7 +546,7 @@ export default function NCAETracker() {
             <div className={`${glassContainerStyle} p-5 space-y-4`}>
               <div className="flex items-center justify-between border-b border-white/60 pb-3">
                 <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-2">
-                  <BarChart3 className="w-4 h-4 text-emerald-700" /> Per-Section Exam Completion Progress
+                  <BarChart3 className="w-4 h-4 text-emerald-700" /> Per-Section Exam Completion Progress (15 Students / Session Cap)
                 </h3>
                 <span className="text-[11px] font-mono text-emerald-700 font-black">Live Sync</span>
               </div>
@@ -609,7 +631,7 @@ export default function NCAETracker() {
                   onClick={handleForceReset}
                   className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-xs font-black shadow-lg shadow-blue-500/30 border border-blue-400/50 transition"
                 >
-                  <RefreshCw className="w-3.5 h-3.5" /> Reset Database
+                  <RefreshCw className="w-3.5 h-3.5" /> Auto-Distribute 15/Session
                 </button>
               </div>
             )}
@@ -640,8 +662,13 @@ export default function NCAETracker() {
                     filteredStudents.map(student => (
                       <tr key={student.id} className={`hover:bg-white/40 transition ${!student.isEligible ? 'opacity-50 bg-slate-100/20' : ''}`}>
                         <td className="py-4 px-5">
-                          <div className="font-black text-slate-900 flex items-center gap-2">
+                          <div 
+                            className={`font-black text-slate-900 flex items-center gap-2 ${role === 'proctor' ? 'cursor-pointer hover:text-blue-700 transition' : ''}`}
+                            onClick={() => role === 'proctor' && setEditingStudent(student)}
+                            title={role === 'proctor' ? "Click to Edit Name & Details" : ""}
+                          >
                             {student.name}
+                            {role === 'proctor' && <Edit3 className="w-3 h-3 text-slate-400 opacity-60 hover:opacity-100" />}
                             {!student.isEligible && (
                               <span className="bg-white/60 text-slate-600 text-[10px] px-2 py-0.5 rounded-full font-mono font-bold flex items-center gap-1 border border-white">
                                 <Ban className="w-3 h-3 text-rose-500" /> NLS
@@ -756,7 +783,7 @@ export default function NCAETracker() {
                             <button
                               onClick={() => setEditingStudent(student)}
                               className="inline-flex items-center gap-1 px-3 py-1 bg-white/80 hover:bg-white border border-white rounded-xl text-slate-800 hover:text-slate-900 text-xs font-black transition shadow-sm"
-                              title="Edit LRN, Schedule & Status"
+                              title="Edit Student Name, LRN, Schedule & Status"
                             >
                               <Edit3 className="w-3.5 h-3.5 text-blue-700" /> Edit
                             </button>
@@ -807,11 +834,24 @@ export default function NCAETracker() {
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-2xl flex items-center justify-center p-4 z-50">
           <div className="bg-white/30 backdrop-blur-3xl border border-white/80 rounded-3xl max-w-md w-full p-6 shadow-[0_24px_48px_0_rgba(0,0,0,0.3)] space-y-4">
             <div>
-              <h3 className="text-lg font-black text-slate-900">Edit Student Schedule & Details</h3>
-              <p className="text-xs text-blue-800 font-black mt-0.5">{editingStudent.name} ({editingStudent.section})</p>
+              <h3 className="text-lg font-black text-slate-900">Edit Student Record</h3>
+              <p className="text-xs text-blue-800 font-black mt-0.5">Section: {editingStudent.section}</p>
             </div>
 
             <form onSubmit={handleSaveEdit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-black text-slate-800 mb-1 flex items-center gap-1.5">
+                  <User className="w-3.5 h-3.5 text-blue-700" /> Full Name
+                </label>
+                <input
+                  type="text"
+                  value={editingStudent.name}
+                  onChange={e => setEditingStudent({ ...editingStudent, name: e.target.value })}
+                  className="w-full bg-white/60 border border-white/80 rounded-2xl px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500 font-bold shadow-inner"
+                  required
+                />
+              </div>
+
               <div>
                 <label className="block text-xs font-black text-slate-800 mb-1 flex items-center gap-1.5">
                   <Hash className="w-3.5 h-3.5 text-blue-700" /> Learner Reference Number (LRN)
