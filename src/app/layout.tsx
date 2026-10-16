@@ -5,7 +5,10 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Bagonbon NHS — NCAE 2026 Portal',
+  title: {
+    default: 'Bagonbon NHS — NCAE 2026 Portal',
+    template: '%s | Bagonbon NHS',
+  },
   description: 'Real-time Examination Pull-Out & Attendance Tracking Portal',
 };
 
