@@ -23,7 +23,6 @@ interface Student {
   isEligible: boolean;
 }
 
-// Function to auto-assign sessions: 15 students per session per section
 const autoAssignSession = (indexInSection: number, isEligible: boolean): string => {
   if (!isEligible) return 'Non-Pullout';
   if (indexInSection < 15) return 'Session 1';
@@ -48,7 +47,6 @@ const RAW_STUDENTS_DATA: Array<Omit<Student, 'session'>> = [
   { id: 'th-13', lrn: '117792150055', name: 'GALLARDO, MARIAN, RAFAEL', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-14', lrn: '117792160012', name: 'GALLARDO, NELBELENE, ASEGURADO', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-15', lrn: '117792160033', name: 'GONZAGA, JOSH ANDREE, TAPDASAN', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
-
   { id: 'th-16', lrn: '117792160034', name: 'HILIGAN, JHON PAOLO, JUANITO', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-17', lrn: '117797160005', name: 'JERANDOY, JOVENOEL, DENEROS', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-18', lrn: '117792160067', name: 'LARIOSA, RINELEN, BARANGGAN', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
@@ -64,7 +62,6 @@ const RAW_STUDENTS_DATA: Array<Omit<Student, 'session'>> = [
   { id: 'th-28', lrn: '117792160054', name: 'PILAPIL, LEONARD, PASULOT', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-29', lrn: '117792160071', name: 'SABERON, JAHAZIEL, JUANILLO', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-30', lrn: '117797150018', name: 'SARNO, ROVEC, OLIVERIO', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
-
   { id: 'th-31', lrn: '126529140010', name: 'VILLAHERMOSA, JOMAR, CARUSCAY', section: 'Thorndike', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-32', lrn: '128387160003', name: 'VILLAJOS, LEA MAE, CABALLERO', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'th-33', lrn: '117792160040', name: 'VILLAREAL, JONA GRACE, GEQUE', section: 'Thorndike', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
@@ -86,7 +83,6 @@ const RAW_STUDENTS_DATA: Array<Omit<Student, 'session'>> = [
   { id: 'ga-13', lrn: '117792160036', name: 'LEMORAN, JOCELLE MARL E.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'ga-14', lrn: '117792170099', name: 'LASCONIA, RODEL D.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'ga-15', lrn: '117798170026', name: 'LINGANAY, GINO D.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
-
   { id: 'ga-16', lrn: '117796160013', name: 'RUBIO, JOHN ANDREW R.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'ga-17', lrn: '117792160059', name: 'SABERON, JAPET R.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'ga-18', lrn: '117797160007', name: 'TELEBRICO, KEVEN I.', section: 'Gardner', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
@@ -118,7 +114,6 @@ const RAW_STUDENTS_DATA: Array<Omit<Student, 'session'>> = [
   { id: 'de-13', lrn: '117796160012', name: 'TAPIC, JHONREY, ESCOREL', section: 'Dewey', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'de-14', lrn: '117797160023', name: 'VILLANUEVA, DHEAN JR, CARAMIHAN', section: 'Dewey', gender: 'M', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'de-15', lrn: '117792160007', name: 'CALOG, MELCHIE, JUANILLO', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
-
   { id: 'de-16', lrn: '117797170044', name: 'CARAMIHAN, PRECIEL JANE, DAYOHA', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'de-17', lrn: '117792160031', name: 'COMPACION, PATRICE MAXXIMA, JUMAGDAO', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
   { id: 'de-18', lrn: '117792150059', name: 'GERANDOY, KHEM, PILAPIL', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
@@ -135,7 +130,6 @@ const RAW_STUDENTS_DATA: Array<Omit<Student, 'session'>> = [
   { id: 'de-29', lrn: '117796170001', name: 'SOHOT, ROSEMARIE, TANIA', section: 'Dewey', gender: 'F', status: 'Not Started', signedAttendance: false, isEligible: true },
 ];
 
-// Pre-assign sessions (15 per session per section)
 const sectionCounters: { [key: string]: number } = { Thorndike: 0, Gardner: 0, Dewey: 0 };
 
 const INITIAL_STUDENTS: Student[] = RAW_STUDENTS_DATA.map(st => {
@@ -158,7 +152,6 @@ export default function NCAETracker() {
   const [selectedStatus, setSelectedStatus] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
-  const [hoveredSessionId, setHoveredSessionId] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
   const [showMetrics, setShowMetrics] = useState<boolean>(true);
 
@@ -223,26 +216,32 @@ export default function NCAETracker() {
   }, []);
 
   const handleStatusChange = async (id: string, newStatus: Student['status']) => {
+    setStudents(prev => prev.map(s => s.id === id ? { ...s, status: newStatus } : s));
     await supabase.from('students').update({ status: newStatus }).eq('id', id);
   };
 
   const handleSessionDirectChange = async (id: string, newSession: string) => {
+    setStudents(prev => prev.map(s => s.id === id ? { ...s, session: newSession } : s));
     await supabase.from('students').update({ session: newSession }).eq('id', id);
   };
 
-  const handleAttendanceToggle = async (id: string, currentVal: boolean) => {
-    await supabase.from('students').update({ signedAttendance: !currentVal }).eq('id', id);
+  const handleAttendanceChange = async (id: string, signed: boolean) => {
+    setStudents(prev => prev.map(s => s.id === id ? { ...s, signedAttendance: signed } : s));
+    await supabase.from('students').update({ signedAttendance: signed }).eq('id', id);
   };
 
   const handleSaveEdit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingStudent) return;
 
+    setStudents(prev => prev.map(s => s.id === editingStudent.id ? editingStudent : s));
+
     await supabase.from('students').update({
       name: editingStudent.name.trim(),
       lrn: editingStudent.lrn.trim(),
       session: editingStudent.session.trim() || 'Session 1',
       status: editingStudent.status,
+      signedAttendance: editingStudent.signedAttendance,
       customStatus: editingStudent.customStatus || ''
     }).eq('id', editingStudent.id);
 
@@ -250,7 +249,7 @@ export default function NCAETracker() {
   };
 
   const handleForceReset = async () => {
-    if (confirm('Force reset database to initial 92 students with auto-balanced 15-student sessions?')) {
+    if (confirm('Reset database to 15-student sessions auto-balanced per section?')) {
       await supabase.from('students').delete().neq('id', '0');
       await supabase.from('students').insert(INITIAL_STUDENTS);
       setStudents(INITIAL_STUDENTS);
@@ -361,7 +360,7 @@ export default function NCAETracker() {
                   Proctor Mode
                 </h3>
                 <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                  Full access to edit student names, LRNs, assigned sessions inline, exam statuses, and toggle attendance signatures.
+                  Full access to edit student names, LRNs, assigned sessions inline, exam statuses, and Form 4 attendance dropdown.
                 </p>
               </div>
               <div className="flex items-center text-xs font-black text-blue-700 group-hover:translate-x-1 transition-transform">
@@ -467,7 +466,6 @@ export default function NCAETracker() {
 
         <div className="max-w-7xl mx-auto space-y-6">
 
-          {/* Adviser Section Quick Liquid Glass Tabs */}
           <div className="flex items-center justify-between bg-white/20 backdrop-blur-3xl border border-white/70 p-2 rounded-3xl shadow-[0_8px_32px_0_rgba(31,38,135,0.12)]">
             <div className="flex items-center gap-1.5">
               {['All', 'Thorndike', 'Gardner', 'Dewey'].map((sec) => (
@@ -490,7 +488,6 @@ export default function NCAETracker() {
             </div>
           </div>
 
-          {/* Interactive Liquid Glass Stat Cards */}
           <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
             <button
               onClick={() => setSelectedStatus('All')}
@@ -541,7 +538,6 @@ export default function NCAETracker() {
             </button>
           </div>
 
-          {/* Expanded Full-Width Per-Section Progress Analytics Bar */}
           {showMetrics && (
             <div className={`${glassContainerStyle} p-5 space-y-4`}>
               <div className="flex items-center justify-between border-b border-white/60 pb-3">
@@ -585,7 +581,6 @@ export default function NCAETracker() {
             </div>
           )}
 
-          {/* Filter Bar */}
           <div className={`${glassContainerStyle} p-4 flex flex-wrap gap-4 items-center justify-between`}>
             <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
               <div className="relative flex-1 min-w-[200px]">
@@ -637,7 +632,6 @@ export default function NCAETracker() {
             )}
           </div>
 
-          {/* Table Container with Liquid Glassmorphism */}
           <div className={`${glassContainerStyle} shadow-[0_16px_48px_0_rgba(31,38,135,0.2)]`}>
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
@@ -645,9 +639,9 @@ export default function NCAETracker() {
                   <tr className="bg-white/30 border-b border-white/60 text-slate-600 text-xs font-black uppercase tracking-wider">
                     <th className="py-4 px-5">LRN & Student Name</th>
                     <th className="py-4 px-5">Section</th>
-                    <th className="py-4 px-5">Assigned Session (Hover/Click to Edit)</th>
+                    <th className="py-4 px-5">Assigned Session</th>
                     <th className="py-4 px-5">Exam Status</th>
-                    <th className="py-4 px-5 text-center">Form 4 Signed</th>
+                    <th className="py-4 px-5 text-center">Form 4 Signed Dropdown</th>
                     {role === 'proctor' && <th className="py-4 px-5 text-right">Actions</th>}
                   </tr>
                 </thead>
@@ -665,7 +659,7 @@ export default function NCAETracker() {
                           <div 
                             className={`font-black text-slate-900 flex items-center gap-2 ${role === 'proctor' ? 'cursor-pointer hover:text-blue-700 transition' : ''}`}
                             onClick={() => role === 'proctor' && setEditingStudent(student)}
-                            title={role === 'proctor' ? "Click to Edit Name & Details" : ""}
+                            title={role === 'proctor' ? "Click to Edit Student Name & Details" : ""}
                           >
                             {student.name}
                             {role === 'proctor' && <Edit3 className="w-3 h-3 text-slate-400 opacity-60 hover:opacity-100" />}
@@ -691,29 +685,17 @@ export default function NCAETracker() {
 
                         <td className="py-4 px-5 text-slate-700 text-xs">
                           {role === 'proctor' && student.isEligible ? (
-                            <div 
-                              className="relative group inline-block"
-                              onMouseEnter={() => setHoveredSessionId(student.id)}
-                              onMouseLeave={() => setHoveredSessionId(null)}
+                            <select
+                              value={student.session}
+                              onChange={e => handleSessionDirectChange(student.id, e.target.value)}
+                              className="bg-blue-50/90 hover:bg-blue-100/90 text-blue-900 font-black border border-blue-200 rounded-xl px-3 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 transition cursor-pointer shadow-sm"
                             >
-                              <select
-                                value={student.session}
-                                onChange={e => handleSessionDirectChange(student.id, e.target.value)}
-                                className="bg-blue-50/90 hover:bg-blue-100/90 text-blue-900 font-black border border-blue-200 rounded-xl px-3 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 transition cursor-pointer shadow-sm"
-                              >
-                                <option value="Session 1">Session 1</option>
-                                <option value="Session 2">Session 2</option>
-                                <option value="Session 3">Session 3</option>
-                                <option value="Make-up Session">Make-up Session</option>
-                                <option value="Non-Pullout">Non-Pullout</option>
-                              </select>
-
-                              {hoveredSessionId === student.id && (
-                                <span className="absolute -top-7 left-0 bg-slate-900 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-lg whitespace-nowrap z-20 pointer-events-none">
-                                  Click to Change Session directly
-                                </span>
-                              )}
-                            </div>
+                              <option value="Session 1">Session 1</option>
+                              <option value="Session 2">Session 2</option>
+                              <option value="Session 3">Session 3</option>
+                              <option value="Make-up Session">Make-up Session</option>
+                              <option value="Non-Pullout">Non-Pullout</option>
+                            </select>
                           ) : (
                             <span className="px-3 py-1 rounded-xl border font-black bg-blue-50/90 text-blue-900 border-blue-200/80 shadow-sm">
                               {student.session}
@@ -760,22 +742,30 @@ export default function NCAETracker() {
                           )}
                         </td>
 
+                        {/* Form 4 Attendance Dropdown */}
                         <td className="py-4 px-5 text-center">
-                          <button
-                            disabled={role === 'adviser' || !student.isEligible}
-                            onClick={() => handleAttendanceToggle(student.id, student.signedAttendance)}
-                            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black border transition ${
+                          {role === 'proctor' && student.isEligible ? (
+                            <select
+                              value={student.signedAttendance ? 'signed' : 'unsigned'}
+                              onChange={e => handleAttendanceChange(student.id, e.target.value === 'signed')}
+                              className={`text-xs font-black px-3 py-1.5 rounded-xl border focus:outline-none transition shadow-sm cursor-pointer ${
+                                student.signedAttendance
+                                  ? 'bg-emerald-50/90 text-emerald-900 border-emerald-300'
+                                  : 'bg-rose-50/90 text-rose-900 border-rose-300'
+                              }`}
+                            >
+                              <option value="signed">✓ Signed Form 4</option>
+                              <option value="unsigned">✕ Unsigned</option>
+                            </select>
+                          ) : (
+                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black border ${
                               student.signedAttendance
-                                ? 'bg-emerald-50/90 text-emerald-900 border-emerald-300 shadow-sm'
+                                ? 'bg-emerald-50/90 text-emerald-900 border-emerald-300'
                                 : 'bg-white/40 text-slate-500 border-white/60'
-                            } ${role === 'adviser' || !student.isEligible ? 'cursor-not-allowed opacity-80' : 'hover:border-white/90'}`}
-                          >
-                            {student.signedAttendance ? (
-                              <><CheckSquare className="w-3.5 h-3.5 text-emerald-700" /> Signed</>
-                            ) : (
-                              <><Square className="w-3.5 h-3.5 text-slate-500" /> Unsigned</>
-                            )}
-                          </button>
+                            }`}>
+                              {student.signedAttendance ? '✓ Signed Form 4' : '✕ Unsigned'}
+                            </span>
+                          )}
                         </td>
 
                         {role === 'proctor' && (
@@ -796,7 +786,6 @@ export default function NCAETracker() {
               </table>
             </div>
 
-            {/* Session-Specific Total Test Takers Summary Bar */}
             <div className="bg-white/40 backdrop-blur-3xl border-t border-white/60 px-6 py-4 flex flex-wrap items-center justify-between text-xs font-black text-slate-800 gap-2">
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-blue-700" />
@@ -877,6 +866,18 @@ export default function NCAETracker() {
                   className="w-full bg-white/60 border border-white/80 rounded-2xl px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500 shadow-inner font-bold"
                   required
                 />
+              </div>
+
+              <div>
+                <label className="block text-xs font-black text-slate-800 mb-1">Form 4 Attendance Status</label>
+                <select
+                  value={editingStudent.signedAttendance ? 'signed' : 'unsigned'}
+                  onChange={e => setEditingStudent({ ...editingStudent, signedAttendance: e.target.value === 'signed' })}
+                  className="w-full bg-white/60 border border-white/80 rounded-2xl px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500 shadow-inner font-bold"
+                >
+                  <option value="signed">✓ Signed Form 4</option>
+                  <option value="unsigned">✕ Unsigned</option>
+                </select>
               </div>
 
               <div>
