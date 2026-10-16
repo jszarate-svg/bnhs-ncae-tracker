@@ -6,7 +6,7 @@ import {
   Users, Search, Shield, UserCheck, Edit3, 
   RefreshCw, CheckSquare, Square, Wifi, WifiOff,
   ArrowRight, LogOut, Ban, Calendar, Hash, Sun, Moon, Sunrise,
-  BarChart3, Download, User, Laptop
+  BarChart3, Download, User, Laptop, Lock, X, Check, Grid
 } from 'lucide-react';
 
 interface Student {
@@ -20,7 +20,10 @@ interface Student {
   signedAttendance: boolean;
   customStatus?: string;
   isEligible: boolean;
+  assignedSeat?: number; // 1 to 16
 }
+
+const DEFAULT_PROCTOR_PIN = '2026';
 
 const RAW_STUDENTS_DATA: Array<Omit<Student, 'session'>> = [
   // 10 - THORNDIKE (34 Total, 33 Eligible)
@@ -123,21 +126,15 @@ const RAW_STUDENTS_DATA: Array<Omit<Student, 'session'>> = [
 ];
 
 const buildInitialStudents = (): Student[] => {
-  // Ordered sequence of eligible students prioritizing section unity:
-  // Session 1 (Day 1 - S1): 15 Thorndike
-  // Session 2 (Day 1 - S2): 15 Thorndike
-  // Session 3 (Day 2 - S1): 3 Thorndike + 12 Gardner (Gardner Majority)
-  // Session 4 (Day 2 - S2): 15 Gardner
-  // Session 5 (Day 3 - S1): 2 Gardner + 13 Dewey (Dewey Majority)
-  // Session 6 (Day 3 - S2): 14 Dewey
-
   let eligibleCounter = 0;
   return RAW_STUDENTS_DATA.map(st => {
     if (!st.isEligible) {
       return { ...st, session: 'Non-Pullout' };
     }
 
-    let sessionName = 'Session 1';
+    let sessionName = 'Day 1 - Session 1';
+    let seatInSession = (eligibleCounter % 15) + 1;
+
     if (eligibleCounter < 15) sessionName = 'Day 1 - Session 1';
     else if (eligibleCounter < 30) sessionName = 'Day 1 - Session 2';
     else if (eligibleCounter < 45) sessionName = 'Day 2 - Session 1';
@@ -146,21 +143,28 @@ const buildInitialStudents = (): Student[] => {
     else sessionName = 'Day 3 - Session 2';
 
     eligibleCounter++;
-    return { ...st, session: sessionName };
+    return { ...st, session: sessionName, assignedSeat: seatInSession };
   });
 };
 
 export default function NCAETracker() {
   const [role, setRole] = useState<'proctor' | 'adviser' | null>(null);
+  const [pinInput, setPinInput] = useState<string>('');
+  const [showPinModal, setShowPinModal] = useState<boolean>(false);
+  const [pinError, setPinError] = useState<boolean>(false);
+
   const [students, setStudents] = useState<Student[]>([]);
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [selectedSection, setSelectedSection] = useState<string>('All');
-  const [selectedSession, setSelectedSession] = useState<string>('All');
+  const [selectedSession, setSelectedSession] = useState<string>('Day 1 - Session 1');
   const [selectedStatus, setSelectedStatus] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
   const [showMetrics, setShowMetrics] = useState<boolean>(true);
+  const [showSeatingMap, setShowSeatingMap] = useState<boolean>(true);
+
+  const [selectedSeatModal, setSelectedSeatModal] = useState<number | null>(null);
 
   useEffect(() => {
     setCurrentTime(new Date());
@@ -224,6 +228,17 @@ export default function NCAETracker() {
     };
   }, []);
 
+  const handleProctorAccess = () => {
+    if (pinInput === DEFAULT_PROCTOR_PIN) {
+      setRole('proctor');
+      setShowPinModal(false);
+      setPinInput('');
+      setPinError(false);
+    } else {
+      setPinError(true);
+    }
+  };
+
   const handleStatusChange = async (id: string, newStatus: Student['status']) => {
     setStudents(prev => prev.map(s => s.id === id ? { ...s, status: newStatus } : s));
     await supabase.from('students').update({ status: newStatus }).eq('id', id);
@@ -237,6 +252,29 @@ export default function NCAETracker() {
   const handleAttendanceChange = async (id: string, signed: boolean) => {
     setStudents(prev => prev.map(s => s.id === id ? { ...s, signedAttendance: signed } : s));
     await supabase.from('students').update({ signedAttendance: signed }).eq('id', id);
+  };
+
+  const handleAssignSeat = async (seatNumber: number, studentId: string | null) => {
+    if (studentId) {
+      // Clear seat from any existing student in this session first
+      setStudents(prev => prev.map(s => {
+        if (s.session === selectedSession && s.assignedSeat === seatNumber) {
+          return { ...s, assignedSeat: undefined };
+        }
+        if (s.id === studentId) {
+          return { ...s, assignedSeat: seatNumber };
+        }
+        return s;
+      }));
+
+      await supabase.from('students').update({ assignedSeat: null }).eq('session', selectedSession).eq('assignedSeat', seatNumber);
+      await supabase.from('students').update({ assignedSeat: seatNumber }).eq('id', studentId);
+    } else {
+      // Unassign seat
+      setStudents(prev => prev.map(s => s.session === selectedSession && s.assignedSeat === seatNumber ? { ...s, assignedSeat: undefined } : s));
+      await supabase.from('students').update({ assignedSeat: null }).eq('session', selectedSession).eq('assignedSeat', seatNumber);
+    }
+    setSelectedSeatModal(null);
   };
 
   const handleSaveEdit = async (e: React.FormEvent) => {
@@ -265,13 +303,14 @@ export default function NCAETracker() {
   };
 
   const exportCSV = () => {
-    const headers = ['LRN', 'Name', 'Section', 'Gender', 'Session', 'Status', 'Form 4 Signed'];
+    const headers = ['LRN', 'Name', 'Section', 'Gender', 'Session', 'Seat/Laptop #', 'Status', 'Form 4 Signed'];
     const rows = filteredStudents.map(s => [
       `"${s.lrn}"`,
       `"${s.name}"`,
       `"${s.section}"`,
       `"${s.gender}"`,
       `"${s.session}"`,
+      s.assignedSeat ? `"Laptop #${s.assignedSeat}"` : '"Unassigned"',
       `"${s.status}"`,
       s.signedAttendance ? 'Signed' : 'Unsigned'
     ]);
@@ -286,6 +325,8 @@ export default function NCAETracker() {
   };
 
   const uniqueSessions = Array.from(new Set(students.map(s => s.session))).filter(Boolean).sort();
+
+  const sessionStudents = students.filter(s => selectedSession === 'All' || s.session === selectedSession);
 
   const filteredStudents = students.filter(s => {
     const matchesSection = selectedSection === 'All' || s.section === selectedSection;
@@ -351,28 +392,29 @@ export default function NCAETracker() {
               NCAE 2026 Portal
             </h1>
             <p className="text-slate-700 text-sm sm:text-base max-w-md mx-auto font-medium leading-relaxed pt-1">
-              Strict 15 Laptop Cap • 2 Sessions / Day Schedule
+              Strict 15 Laptop Cap • 4 Tables Seating Map • Protected Access
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-left pt-2">
             <button
-              onClick={() => setRole('proctor')}
-              className={`${glassCardStyle} p-6 flex flex-col justify-between space-y-6 hover:-translate-y-1.5 group`}
+              onClick={() => setShowPinModal(true)}
+              className={`${glassCardStyle} p-6 flex flex-col justify-between space-y-6 hover:-translate-y-1.5 group border-2 border-blue-400/40`}
             >
               <div className="space-y-4">
-                <div className="p-3.5 bg-blue-500/20 text-blue-800 rounded-2xl w-fit border border-white/80 shadow-inner">
+                <div className="p-3.5 bg-blue-500/20 text-blue-800 rounded-2xl w-fit border border-white/80 shadow-inner flex items-center gap-2">
                   <Shield className="w-6 h-6" />
+                  <Lock className="w-4 h-4 text-blue-700" />
                 </div>
                 <h3 className="text-lg font-black text-slate-900 group-hover:text-blue-700 transition-colors">
-                  Proctor Mode
+                  Proctor Mode (PIN Locked)
                 </h3>
                 <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                  Full access to edit student names, LRNs, assigned sessions inline, exam statuses, and Form 4 attendance dropdown.
+                  Requires 4-digit PIN lock to edit student names, session schedules, seating laptop diagram, and attendance.
                 </p>
               </div>
               <div className="flex items-center text-xs font-black text-blue-700 group-hover:translate-x-1 transition-transform">
-                Enter as Proctor <ArrowRight className="w-4 h-4 ml-1" />
+                Unlock Proctor Portal <ArrowRight className="w-4 h-4 ml-1" />
               </div>
             </button>
 
@@ -388,7 +430,7 @@ export default function NCAETracker() {
                   Adviser Mode
                 </h3>
                 <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                  Read-only view designed for section advisers with section tabs & section analytics charts.
+                  Public read-only view for section advisers with live seating map, section tabs & analytics.
                 </p>
               </div>
               <div className="flex items-center text-xs font-black text-emerald-700 group-hover:translate-x-1 transition-transform">
@@ -406,6 +448,52 @@ export default function NCAETracker() {
             JUDIMER ZARATE — BAGONBON NHS NCAE 2026 PORTAL
           </div>
         </div>
+
+        {showPinModal && (
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-2xl flex items-center justify-center p-4 z-50">
+            <div className="bg-white/30 backdrop-blur-3xl border border-white/80 rounded-3xl max-w-sm w-full p-6 shadow-[0_24px_48px_0_rgba(0,0,0,0.3)] space-y-5 text-center">
+              <div className="p-4 bg-blue-500/20 text-blue-900 rounded-full w-fit mx-auto border border-white">
+                <Lock className="w-8 h-8" />
+              </div>
+              <div>
+                <h3 className="text-xl font-black text-slate-900">Enter Proctor PIN</h3>
+                <p className="text-xs text-slate-700 font-bold mt-1">Default PIN is <code className="bg-white/60 px-2 py-0.5 rounded text-blue-900">2026</code></p>
+              </div>
+
+              <input
+                type="password"
+                maxLength={6}
+                value={pinInput}
+                onChange={e => { setPinInput(e.target.value); setPinError(false); }}
+                onKeyDown={e => e.key === 'Enter' && handleProctorAccess()}
+                placeholder="Enter PIN..."
+                className="w-full text-center text-2xl tracking-[0.5em] font-mono bg-white/70 border border-white rounded-2xl py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-inner text-slate-900 font-bold"
+                autoFocus
+              />
+
+              {pinError && (
+                <p className="text-xs font-black text-rose-700 bg-rose-100/80 p-2 rounded-xl border border-rose-200">
+                  Incorrect PIN! Try entering 2026.
+                </p>
+              )}
+
+              <div className="flex gap-2">
+                <button
+                  onClick={() => { setShowPinModal(false); setPinInput(''); setPinError(false); }}
+                  className="flex-1 py-2.5 bg-white/50 hover:bg-white/80 text-slate-800 rounded-2xl text-xs font-black transition border border-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleProctorAccess}
+                  className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-xs font-black shadow-lg shadow-blue-500/30 border border-blue-400/50 transition"
+                >
+                  Verify PIN
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -434,13 +522,21 @@ export default function NCAETracker() {
                   Bagonbon NHS — NCAE 2026 Portal
                 </h1>
                 <p className="text-slate-600 text-sm mt-0.5 font-bold flex items-center gap-1.5">
-                  <Laptop className="w-4 h-4 text-blue-700" /> 15 Laptops Max Per Session • 2 Sessions / Day
+                  <Laptop className="w-4 h-4 text-blue-700" /> 15 Laptop Cap • 4 Tables Interactive Seating Diagram
                 </p>
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-3 self-start md:self-auto">
+            <button
+              onClick={() => setShowSeatingMap(!showSeatingMap)}
+              className={`flex items-center gap-1.5 px-4 py-2.5 backdrop-blur-3xl border border-white/80 rounded-2xl text-xs font-black shadow-[0_4px_20px_0_rgba(31,38,135,0.08)] transition ${showSeatingMap ? 'bg-indigo-600 text-white' : 'bg-white/30 text-slate-800 hover:bg-white/50'}`}
+            >
+              <Grid className="w-4 h-4" />
+              {showSeatingMap ? 'Hide Seating Map' : '4 Tables Seating Map'}
+            </button>
+
             <button
               onClick={() => setShowMetrics(!showMetrics)}
               className="flex items-center gap-1.5 px-4 py-2.5 bg-white/30 backdrop-blur-3xl hover:bg-white/50 border border-white/80 rounded-2xl text-xs font-black text-slate-800 shadow-[0_4px_20px_0_rgba(31,38,135,0.08)] transition"
@@ -468,7 +564,7 @@ export default function NCAETracker() {
                 onClick={() => setRole(null)}
                 className="flex items-center gap-1.5 px-3 py-2 text-slate-700 hover:text-slate-900 text-xs font-bold transition"
               >
-                <LogOut className="w-3.5 h-3.5" /> Exit Role
+                <LogOut className="w-3.5 h-3.5" /> Lock Portal
               </button>
             </div>
           </div>
@@ -497,6 +593,117 @@ export default function NCAETracker() {
               Filtered: <span className="text-blue-800 font-black">{filteredStudents.length} Students</span>
             </div>
           </div>
+
+          {/* INTERACTIVE 4-TABLE CLASSROOM LAPTOP MAP */}
+          {showSeatingMap && (
+            <div className={`${glassContainerStyle} p-6 space-y-4 border-2 border-indigo-300/60 shadow-2xl`}>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/60 pb-4">
+                <div>
+                  <h3 className="text-sm font-black text-slate-900 flex items-center gap-2">
+                    <Laptop className="w-5 h-5 text-indigo-700" />
+                    Interactive Classroom Laptop Assignment Map (4 Tables × 4 Seats)
+                  </h3>
+                  <p className="text-xs text-slate-700 font-medium mt-0.5">
+                    Showing active seating layout for <span className="font-black text-indigo-900">{selectedSession}</span>. Click any seat to place/reassign a student with a laptop.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 self-start sm:self-auto">
+                  <select
+                    value={selectedSession}
+                    onChange={e => setSelectedSession(e.target.value)}
+                    className="bg-white/80 border border-white rounded-2xl px-4 py-2 text-xs text-slate-900 font-black shadow-inner"
+                  >
+                    {uniqueSessions.map(session => (
+                      <option key={session} value={session}>{session}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* 4 TABLES GRID */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-2">
+                {[1, 2, 3, 4].map(tableNum => {
+                  const tableSeatStart = (tableNum - 1) * 4 + 1;
+                  const tableSeatNumbers = [tableSeatStart, tableSeatStart + 1, tableSeatStart + 2, tableSeatStart + 3];
+
+                  return (
+                    <div key={tableNum} className="bg-white/40 backdrop-blur-2xl border border-white/80 rounded-3xl p-4 shadow-lg flex flex-col justify-between space-y-4">
+                      <div className="flex items-center justify-between border-b border-white/60 pb-2">
+                        <span className="text-xs font-black uppercase text-indigo-900">Table {tableNum}</span>
+                        <span className="text-[10px] font-bold text-slate-600 bg-white/60 px-2.5 py-0.5 rounded-full border border-white">
+                          4 Laptop Stations
+                        </span>
+                      </div>
+
+                      {/* 4 Seats in Table */}
+                      <div className="grid grid-cols-2 gap-3">
+                        {tableSeatNumbers.map(seatNum => {
+                          const isLaptopAvailable = seatNum <= 15;
+                          const assignedStudent = sessionStudents.find(s => s.assignedSeat === seatNum);
+
+                          return (
+                            <button
+                              key={seatNum}
+                              disabled={role !== 'proctor' && !isLaptopAvailable}
+                              onClick={() => role === 'proctor' && isLaptopAvailable && setSelectedSeatModal(seatNum)}
+                              className={`p-3 rounded-2xl text-left border transition-all flex flex-col justify-between h-28 relative ${
+                                assignedStudent
+                                  ? assignedStudent.status === 'Completed'
+                                    ? 'bg-emerald-500/20 border-emerald-400 text-emerald-950 shadow-md'
+                                    : assignedStudent.status === 'In Exam'
+                                    ? 'bg-amber-500/20 border-amber-400 text-amber-950 shadow-md'
+                                    : 'bg-blue-500/20 border-blue-400 text-blue-950 shadow-md'
+                                  : isLaptopAvailable
+                                  ? 'bg-white/50 border-white/80 hover:bg-white/80 hover:border-indigo-400 text-slate-700'
+                                  : 'bg-slate-200/50 border-slate-300 text-slate-400 cursor-not-allowed'
+                              }`}
+                            >
+                              <div className="flex items-center justify-between w-full">
+                                <span className="text-[10px] font-black uppercase tracking-wider">
+                                  {isLaptopAvailable ? `Laptop #${seatNum}` : `Spare / Desk 16`}
+                                </span>
+                                {assignedStudent ? (
+                                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                                ) : (
+                                  <Laptop className={`w-3.5 h-3.5 ${isLaptopAvailable ? 'text-indigo-600' : 'text-slate-400'}`} />
+                                )}
+                              </div>
+
+                              <div>
+                                {assignedStudent ? (
+                                  <div>
+                                    <p className="text-xs font-black leading-tight line-clamp-2 text-slate-900">
+                                      {assignedStudent.name}
+                                    </p>
+                                    <p className="text-[10px] font-bold text-slate-600 mt-0.5">
+                                      {assignedStudent.section}
+                                    </p>
+                                  </div>
+                                ) : (
+                                  <p className="text-[11px] font-bold text-slate-400 italic">
+                                    {isLaptopAvailable ? (role === 'proctor' ? 'Click to Assign' : 'Empty Seat') : 'Proctor Desk'}
+                                  </p>
+                                )}
+                              </div>
+
+                              {assignedStudent && (
+                                <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-md w-fit border ${
+                                  assignedStudent.status === 'Completed' ? 'bg-emerald-100 border-emerald-300 text-emerald-800' : 'bg-white/80 border-white text-slate-700'
+                                }`}>
+                                  {assignedStudent.status}
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
             <button
@@ -649,7 +856,7 @@ export default function NCAETracker() {
                   <tr className="bg-white/30 border-b border-white/60 text-slate-600 text-xs font-black uppercase tracking-wider">
                     <th className="py-4 px-5">LRN & Student Name</th>
                     <th className="py-4 px-5">Section</th>
-                    <th className="py-4 px-5">Assigned Session (Max 15 Laptops)</th>
+                    <th className="py-4 px-5">Assigned Session & Laptop #</th>
                     <th className="py-4 px-5">Exam Status</th>
                     <th className="py-4 px-5 text-center">Form 4 Signed</th>
                     {role === 'proctor' && <th className="py-4 px-5 text-right">Actions</th>}
@@ -695,23 +902,30 @@ export default function NCAETracker() {
 
                         <td className="py-4 px-5 text-slate-700 text-xs">
                           {role === 'proctor' && student.isEligible ? (
-                            <select
-                              value={student.session}
-                              onChange={e => handleSessionDirectChange(student.id, e.target.value)}
-                              className="bg-blue-50/90 hover:bg-blue-100/90 text-blue-900 font-black border border-blue-200 rounded-xl px-3 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 transition cursor-pointer shadow-sm"
-                            >
-                              <option value="Day 1 - Session 1">Day 1 - Session 1</option>
-                              <option value="Day 1 - Session 2">Day 1 - Session 2</option>
-                              <option value="Day 2 - Session 1">Day 2 - Session 1</option>
-                              <option value="Day 2 - Session 2">Day 2 - Session 2</option>
-                              <option value="Day 3 - Session 1">Day 3 - Session 1</option>
-                              <option value="Day 3 - Session 2">Day 3 - Session 2</option>
-                              <option value="Make-up Session">Make-up Session</option>
-                              <option value="Non-Pullout">Non-Pullout</option>
-                            </select>
+                            <div className="flex items-center gap-2">
+                              <select
+                                value={student.session}
+                                onChange={e => handleSessionDirectChange(student.id, e.target.value)}
+                                className="bg-blue-50/90 hover:bg-blue-100/90 text-blue-900 font-black border border-blue-200 rounded-xl px-3 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 transition cursor-pointer shadow-sm"
+                              >
+                                <option value="Day 1 - Session 1">Day 1 - Session 1</option>
+                                <option value="Day 1 - Session 2">Day 1 - Session 2</option>
+                                <option value="Day 2 - Session 1">Day 2 - Session 1</option>
+                                <option value="Day 2 - Session 2">Day 2 - Session 2</option>
+                                <option value="Day 3 - Session 1">Day 3 - Session 1</option>
+                                <option value="Day 3 - Session 2">Day 3 - Session 2</option>
+                                <option value="Make-up Session">Make-up Session</option>
+                                <option value="Non-Pullout">Non-Pullout</option>
+                              </select>
+                              {student.assignedSeat && (
+                                <span className="bg-indigo-600 text-white text-[11px] font-black px-2.5 py-1 rounded-xl shadow-sm">
+                                  Laptop #{student.assignedSeat}
+                                </span>
+                              )}
+                            </div>
                           ) : (
                             <span className="px-3 py-1 rounded-xl border font-black bg-blue-50/90 text-blue-900 border-blue-200/80 shadow-sm">
-                              {student.session}
+                              {student.session} {student.assignedSeat ? `(Laptop #${student.assignedSeat})` : ''}
                             </span>
                           )}
                         </td>
@@ -830,6 +1044,79 @@ export default function NCAETracker() {
       <footer className="mt-12 pt-6 border-t border-white/60 text-center text-xs font-black text-slate-500/80 tracking-widest uppercase relative z-10">
         JUDIMER ZARATE — BAGONBON NHS NCAE 2026 PORTAL
       </footer>
+
+      {/* SEAT / LAPTOP ASSIGNMENT MODAL */}
+      {selectedSeatModal && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-2xl flex items-center justify-center p-4 z-50">
+          <div className="bg-white/30 backdrop-blur-3xl border border-white/80 rounded-3xl max-w-md w-full p-6 shadow-[0_24px_48px_0_rgba(0,0,0,0.3)] space-y-4">
+            <div className="flex items-center justify-between border-b border-white/60 pb-3">
+              <div>
+                <h3 className="text-lg font-black text-slate-900">Assign Student to Laptop #{selectedSeatModal}</h3>
+                <p className="text-xs text-blue-900 font-black mt-0.5">Session: {selectedSession}</p>
+              </div>
+              <button
+                onClick={() => setSelectedSeatModal(null)}
+                className="p-1.5 bg-white/60 hover:bg-white rounded-full text-slate-700 transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-700 font-medium leading-relaxed">
+              Select a student from <span className="font-black text-slate-900">{selectedSession}</span> to place at Laptop #{selectedSeatModal}:
+            </p>
+
+            <div className="max-h-60 overflow-y-auto space-y-2 pr-1">
+              <button
+                onClick={() => handleAssignSeat(selectedSeatModal, null)}
+                className="w-full p-3 bg-rose-500/20 hover:bg-rose-500/30 border border-rose-300 rounded-2xl text-left text-xs font-black text-rose-900 transition flex items-center justify-between"
+              >
+                <span>✕ Leave Laptop Unassigned / Clear Seat</span>
+              </button>
+
+              {sessionStudents.filter(s => s.isEligible).map(student => {
+                const isCurrentlySeatedHere = student.assignedSeat === selectedSeatModal;
+
+                return (
+                  <button
+                    key={student.id}
+                    onClick={() => handleAssignSeat(selectedSeatModal, student.id)}
+                    className={`w-full p-3 rounded-2xl text-left text-xs font-bold transition flex items-center justify-between border ${
+                      isCurrentlySeatedHere
+                        ? 'bg-indigo-600 text-white border-indigo-500 shadow-md'
+                        : 'bg-white/60 hover:bg-white/90 border-white text-slate-900'
+                    }`}
+                  >
+                    <div>
+                      <p className="font-black">{student.name}</p>
+                      <p className={`text-[10px] font-medium ${isCurrentlySeatedHere ? 'text-indigo-200' : 'text-slate-600'}`}>
+                        {student.section} • {student.lrn}
+                      </p>
+                    </div>
+
+                    {student.assignedSeat && !isCurrentlySeatedHere ? (
+                      <span className="text-[10px] font-black bg-white/80 text-slate-700 px-2 py-0.5 rounded-full border border-slate-200">
+                        Laptop #{student.assignedSeat}
+                      </span>
+                    ) : isCurrentlySeatedHere ? (
+                      <Check className="w-4 h-4 text-white" />
+                    ) : null}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="pt-2 border-t border-white/60 text-right">
+              <button
+                onClick={() => setSelectedSeatModal(null)}
+                className="px-4 py-2 bg-white/60 hover:bg-white text-slate-800 rounded-2xl text-xs font-black transition border border-white"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {editingStudent && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-2xl flex items-center justify-center p-4 z-50">
