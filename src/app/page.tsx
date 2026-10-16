@@ -6,7 +6,7 @@ import {
   Users, Search, Shield, UserCheck, Edit3, 
   RefreshCw, Wifi, WifiOff,
   ArrowRight, LogOut, Ban, Calendar, Hash, Sun, Moon, Sunrise,
-  BarChart3, Download, User, Laptop, Lock, X, Check, Grid, Printer
+  BarChart3, User, Laptop, Lock, X, Check, Grid, Printer
 } from 'lucide-react';
 
 interface Student {
@@ -304,28 +304,6 @@ export default function NCAETracker() {
     window.print();
   };
 
-  const exportCSV = () => {
-    const headers = ['LRN', 'Name', 'Section', 'Gender', 'Session', 'Seat/Laptop #', 'Status', 'Form 4 Signed'];
-    const rows = filteredStudents.map(s => [
-      `"${s.lrn}"`,
-      `"${s.name}"`,
-      `"${s.section}"`,
-      `"${s.gender}"`,
-      `"${s.session}"`,
-      s.assignedSeat ? `"Laptop #${s.assignedSeat}"` : '"Unassigned"',
-      `"${s.status}"`,
-      s.signedAttendance ? 'Signed' : 'Unsigned'
-    ]);
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `NCAE_15Laptops_Pullout_${selectedSection}_${new Date().toISOString().slice(0,10)}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   const uniqueSessions = Array.from(new Set(students.map(s => s.session))).filter(Boolean).sort();
 
   const sessionStudents = students.filter(s => selectedSession === 'All' || s.session === selectedSession);
@@ -439,7 +417,7 @@ export default function NCAETracker() {
                   Advisers / Students Mode
                 </h3>
                 <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                  Public directory view. Filter by Section to look up your schedule or print/export PDF reports.
+                  Public directory view. Filter by Section to look up your schedule or print PDF reports.
                 </p>
               </div>
               <div className="flex items-center text-xs font-black text-emerald-700">
@@ -548,14 +526,14 @@ export default function NCAETracker() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2 pt-1 sm:pt-0">
-            {/* PRINT / SAVE AS PDF BUTTON — AVAILABLE FOR BOTH PROCTORS & ADVISERS/STUDENTS */}
+            {/* PRINT / SAVE AS PDF BUTTON */}
             <button
               onClick={triggerPrintPDF}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl text-xs font-black shadow-md transition"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl text-xs font-black shadow-md transition cursor-pointer"
               title="Print Schedule or Save as PDF"
             >
-              <Printer className="w-3.5 h-3.5" />
-              Print / PDF
+              <Printer className="w-4 h-4" />
+              Print / Save as PDF
             </button>
 
             {role === 'proctor' && (
@@ -575,16 +553,6 @@ export default function NCAETracker() {
               <BarChart3 className="w-3.5 h-3.5 text-blue-700" />
               {showMetrics ? 'Hide Analytics' : 'Analytics'}
             </button>
-
-            {role === 'proctor' && (
-              <button
-                onClick={exportCSV}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 bg-emerald-600 text-white rounded-2xl text-xs font-black shadow-sm transition"
-              >
-                <Download className="w-3.5 h-3.5" />
-                CSV
-              </button>
-            )}
 
             <div className="flex items-center bg-white/30 backdrop-blur-3xl border border-white/80 p-1 rounded-2xl w-full sm:w-auto justify-between sm:justify-start">
               <span className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-black ${
